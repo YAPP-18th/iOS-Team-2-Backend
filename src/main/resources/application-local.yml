@@ -4,10 +4,13 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
       hibernate:
-        ddl-auto: create
-      properties:
-        hibernate:
-          format_sql: true
+        format_sql: true
 
+jwt:
+  header: Authorization
+  token-validity-in-seconds: 86400
