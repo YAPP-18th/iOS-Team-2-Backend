@@ -2,12 +2,16 @@ package com.yapp.yongyong.domain.user.service;
 
 import com.yapp.yongyong.domain.user.domain.Authority;
 import com.yapp.yongyong.domain.user.domain.Role;
+import com.yapp.yongyong.domain.user.domain.TermsOfService;
 import com.yapp.yongyong.domain.user.domain.User;
 import com.yapp.yongyong.domain.user.dto.LoginDto;
+import com.yapp.yongyong.domain.user.dto.SignUpDto;
 import com.yapp.yongyong.domain.user.dto.TokenDto;
 import com.yapp.yongyong.domain.user.error.DuplicateRegisterException;
+import com.yapp.yongyong.domain.user.repository.TermsOfServiceRepository;
 import com.yapp.yongyong.domain.user.repository.UserRepository;
 import com.yapp.yongyong.global.jwt.TokenProvider;
+import com.yapp.yongyong.infra.uploader.Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,25 +27,41 @@ import java.util.Collections;
 @Transactional
 @Service
 public class UserService {
+    private static final String PROFILE = "profile";
+
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final PasswordEncoder passwordEncoder;
+    private final Uploader uploader;
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final TermsOfServiceRepository termsOfServiceRepository;
 
-    public void signUp(LoginDto loginDto){
-        if(userRepository.existsByEmail(loginDto.getEmail())){
+    public void signUp(SignUpDto signUpDto) {
+        if (userRepository.existsByEmail(signUpDto.getEmail())) {
             throw new DuplicateRegisterException("이미 가입되어 있는 유저입니다.");
         }
 
         Authority authority = new Authority(Role.USER.getName());
 
         User user = User.builder()
-                .email(loginDto.getEmail())
-                .password(passwordEncoder.encode(loginDto.getPassword()))
+                .email(signUpDto.getEmail())
+                .password(passwordEncoder.encode(signUpDto.getPassword()))
                 .authorities(Collections.singleton(authority))
+                .nickname(signUpDto.getNickname())
+                .imageUrl(uploader.upload(signUpDto.getProfileImage(), PROFILE))
+                .introduction(signUpDto.getIntroduction())
                 .build();
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        TermsOfService terms = TermsOfService.builder()
+                .location(signUpDto.isLocation())
+                .service(signUpDto.isService())
+                .privacy(signUpDto.isPrivacy())
+                .marketing(signUpDto.isMarketing())
+                .user(savedUser)
+                .build();
+        termsOfServiceRepository.save(terms);
     }
 
     public TokenDto login(LoginDto loginDto) {
