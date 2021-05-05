@@ -15,3 +15,8 @@ spring:
 jwt:
   header: Authorization
   token-validity-in-seconds: 86400
+
+cloud:
+  aws:
+    s3:
+      bucket: test
