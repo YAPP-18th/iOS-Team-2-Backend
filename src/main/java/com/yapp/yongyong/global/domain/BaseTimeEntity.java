@@ -1,4 +1,4 @@
-package com.yapp.yongyong.domain.global;
+package com.yapp.yongyong.global.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
