@@ -16,14 +16,14 @@ import java.util.Set;
 @Entity
 public class User {
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column
+    @Column(name = "password")
     private String password;
 
     @ManyToMany
@@ -33,10 +33,23 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name="authority_name", referencedColumnName = "authority_name")})
     private Set<Authority> authorities;
 
+    @Column(name = "nickname")
+    private String nickname;
+
+    @Column(name = "image_url")
+    @Lob
+    private String imageUrl;
+
+    @Column(name = "introduction")
+    private String introduction;
+
     @Builder
-    public User(String email, String password, Set<Authority> authorities) {
+    public User(String email, String password, Set<Authority> authorities, String nickname, String imageUrl, String introduction) {
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.nickname = nickname;
+        this.imageUrl = imageUrl;
+        this.introduction = introduction;
     }
 }
