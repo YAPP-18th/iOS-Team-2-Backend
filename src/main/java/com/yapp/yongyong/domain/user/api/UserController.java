@@ -2,6 +2,7 @@ package com.yapp.yongyong.domain.user.api;
 
 
 import com.yapp.yongyong.domain.user.dto.LoginDto;
+import com.yapp.yongyong.domain.user.dto.SignUpDto;
 import com.yapp.yongyong.domain.user.dto.TokenDto;
 import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.domain.CommonApiResponse;
@@ -28,10 +29,8 @@ public class UserController {
             @ApiResponse(code = 201, message = "success")
     })
     @PostMapping("/sign-up")
-    public ResponseEntity<Void> signup(
-            @Valid @RequestBody LoginDto userDto
-    ) {
-        userService.signUp(userDto);
+    public ResponseEntity<Void> signup(@Valid SignUpDto signUpDto) {
+        userService.signUp(signUpDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
