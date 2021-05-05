@@ -20,3 +20,7 @@ cloud:
   aws:
     s3:
       bucket: test
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
