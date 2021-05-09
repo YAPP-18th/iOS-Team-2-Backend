@@ -8,13 +8,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum GlobalErrorCode implements ErrorCode{
-    NOT_EXIST(400,"G001","Not Exist"),
-    NOT_UNIQUE(400,"G002","Not Unique"),
-    IO_NOT_WORK(502,"G003","IO Not Work"),
-    NOT_DELTE_ERROR(503,"U007","Not Delete Completed")
+    NOT_EXIST("G001","Not Exist"),
+    NOT_UNIQUE("G002","Not Unique"),
+    IO_NOT_WORK("G003","IO Not Work"),
+    NOT_DELTE_ERROR("G004","Not Delete Completed"),
+    OAUTH2_NOT_WORK("G005","OAuth2 Not Work")
     ;
 
-    private int status;
     private final String code;
     private final String message;
 }
