@@ -1,6 +1,7 @@
 package com.yapp.yongyong.domain.user.domain;
 
 
+import com.yapp.yongyong.global.error.NotExistException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,13 +44,32 @@ public class User {
     @Column(name = "introduction")
     private String introduction;
 
+    @Column(name = "provider")
+    private String provider;
+
     @Builder
-    public User(String email, String password, Set<Authority> authorities, String nickname, String imageUrl, String introduction) {
+    public User(String email, String password, Set<Authority> authorities, String nickname, String imageUrl, String introduction, String provider) {
         this.email = email;
         this.password = password;
         this.authorities = authorities;
         this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.introduction = introduction;
+        this.provider = provider;
+    }
+
+    public User update(String name, String picture){
+        this.nickname = name;
+        this.imageUrl = picture;
+
+        return this;
+    }
+
+    public String getUserRoleKey(){
+        return authorities.stream()
+                .filter(authority -> authority.getAuthorityName().equals(Role.USER.getName()))
+                .map(Authority::getAuthorityName)
+                .findAny()
+                .orElseThrow(()->new NotExistException("유저 권한이 존재하지 않습니다."));
     }
 }

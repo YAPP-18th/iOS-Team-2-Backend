@@ -1,9 +1,12 @@
 package com.yapp.yongyong.global.config;
 
+import com.yapp.yongyong.global.oauth2.CustomOAuth2UserService;
 import com.yapp.yongyong.global.jwt.JwtAccessDeniedHandler;
 import com.yapp.yongyong.global.jwt.JwtAuthenticationEntryPoint;
 import com.yapp.yongyong.global.jwt.JwtSecurityConfig;
 import com.yapp.yongyong.global.jwt.TokenProvider;
+import com.yapp.yongyong.global.oauth2.OAuth2AuthenticationFailureHandler;
+import com.yapp.yongyong.global.oauth2.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,6 +26,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,7 +76,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
 
                 .and()
-                .apply(new JwtSecurityConfig(tokenProvider));
+                .apply(new JwtSecurityConfig(tokenProvider))
+
+                .and()
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler);
     }
 
 }
