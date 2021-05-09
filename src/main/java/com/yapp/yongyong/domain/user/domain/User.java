@@ -1,6 +1,7 @@
 package com.yapp.yongyong.domain.user.domain;
 
 
+import com.yapp.yongyong.global.domain.BaseTimeEntity;
 import com.yapp.yongyong.global.error.NotExistException;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name="users")
 @Entity
-public class User {
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
