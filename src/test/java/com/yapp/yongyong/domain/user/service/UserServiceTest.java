@@ -65,6 +65,7 @@ class UserServiceTest {
                 .introduction(signUpDto.getIntroduction())
                 .nickname(signUpDto.getNickname())
                 .authorities(Collections.singleton(authority))
+                .provider("GENERAL")
                 .build();
         TermsOfService terms = TermsOfService.builder()
                 .location(signUpDto.isLocation())

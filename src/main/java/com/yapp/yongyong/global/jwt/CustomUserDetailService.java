@@ -1,4 +1,4 @@
-package com.yapp.yongyong.domain.user.service;
+package com.yapp.yongyong.global.jwt;
 
 import com.yapp.yongyong.domain.user.domain.User;
 import com.yapp.yongyong.domain.user.repository.UserRepository;

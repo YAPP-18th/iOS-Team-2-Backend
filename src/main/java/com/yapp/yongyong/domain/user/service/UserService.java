@@ -28,6 +28,7 @@ import java.util.Collections;
 @Service
 public class UserService {
     private static final String PROFILE = "profile";
+    private static final String GENERAL = "GENERAL";
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -51,6 +52,7 @@ public class UserService {
                 .nickname(signUpDto.getNickname())
                 .imageUrl(uploader.upload(signUpDto.getProfileImage(), PROFILE))
                 .introduction(signUpDto.getIntroduction())
+                .provider(GENERAL)
                 .build();
         User savedUser = userRepository.save(user);
 
