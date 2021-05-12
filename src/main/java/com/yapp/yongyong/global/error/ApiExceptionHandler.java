@@ -27,6 +27,13 @@ public class ApiExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleNotDeleteException(NotDeleteException e) {
         log.error("NotDeleteException", e);
         final ErrorResponse response = ErrorResponse.of(GlobalErrorCode.NOT_DELTE_ERROR, e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    protected ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e) {
+        log.error("BadRequestException", e);
+        final ErrorResponse response = ErrorResponse.of(GlobalErrorCode.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
