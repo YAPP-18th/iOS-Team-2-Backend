@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "posts_containers")
 @Entity

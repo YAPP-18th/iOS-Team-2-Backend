@@ -30,7 +30,7 @@ public class PostController {
 
     @ApiOperation(value = "게시물 올리기")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "success", response = TokenDto.class)
+            @ApiResponse(code = 201, message = "created")
     })
     @PostMapping
     @PreAuthorize("hasAnyRole('USER')")
@@ -41,7 +41,7 @@ public class PostController {
 
     @ApiOperation(value = "가게별 게시물 전체 조회")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "success", response = TokenDto.class)
+            @ApiResponse(code = 200, message = "success", response = PostResponseDto.class, responseContainer = "List" )
     })
     @GetMapping("/place")
     @PreAuthorize("hasAnyRole('GUEST','USER')")

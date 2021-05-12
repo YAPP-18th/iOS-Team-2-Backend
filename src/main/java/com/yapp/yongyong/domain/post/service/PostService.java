@@ -12,12 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,17 +35,17 @@ public class PostService {
                     Place newPlace = new Place(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation());
                     return placeRepository.save(newPlace);
                 });
-        Post savePost = postRepository.save(PostMapper.INSTANCE.toEntity(postRequestDto,findPlace,user));
+        findPlace.addReviewCount();
+        Post savePost = postRepository.save(PostMapper.INSTANCE.toEntity(postRequestDto, findPlace, user));
         postRequestDto.getPostImages()
                 .forEach(image -> {
-                    PostImage savePostImage = postImageRepository.save(new PostImage(uploader.upload(image, POST),savePost));
+                    PostImage savePostImage = postImageRepository.save(new PostImage(uploader.upload(image, POST), savePost));
                     savePost.getPostImages().add(savePostImage);
                 });
         postRequestDto.getContainers()
                 .forEach(containerDto -> {
                     Container findContainer = containerRepository.findById(containerDto.getContainerId()).orElse(new Container());
-                    PostContainer postContainer = postContainerRepository.save(PostMapper.INSTANCE.toEntity(containerDto,findContainer));
-                    postContainer.setPost(savePost);
+                    PostContainer postContainer = postContainerRepository.save(PostMapper.INSTANCE.toEntity(containerDto, findContainer, savePost));
                 });
         return savePost;
     }

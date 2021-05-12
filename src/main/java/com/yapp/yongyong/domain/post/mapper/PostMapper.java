@@ -22,13 +22,14 @@ public interface PostMapper {
     @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
     PostResponseDto toDto(Post post);
 
-    @Mapping(source = "dto.content",target = "content")
+    @Mapping(source = "dto.content", target = "content")
     Post toEntity(PostRequestDto dto, Place place, User user);
 
-    @Mapping(source = "dto.containerCount",target = "containerCount")
-    @Mapping(source = "dto.foodCount",target = "foodCount")
-    @Mapping(source = "dto.food",target = "food")
-    PostContainer toEntity(ContainerDto dto, Container container);
+    @Mapping(target = "id",ignore = true)
+    @Mapping(source = "dto.containerCount", target = "containerCount")
+    @Mapping(source = "dto.foodCount", target = "foodCount")
+    @Mapping(source = "dto.food", target = "food")
+    PostContainer toEntity(ContainerDto dto, Container container, Post post);
 
     List<PostContainerDto> convert(List<PostContainer> postContainers);
 
