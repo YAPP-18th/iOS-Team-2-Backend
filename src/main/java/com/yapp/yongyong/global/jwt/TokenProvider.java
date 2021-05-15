@@ -1,9 +1,10 @@
 package com.yapp.yongyong.global.jwt;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,7 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -20,17 +21,26 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class TokenProvider {
+public class TokenProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "auth";
 
     private final long tokenValidityInMilliseconds;
+    private final String secret;
 
-    public TokenProvider(@Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+    private Key key;
+
+    public TokenProvider(@Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
+                         @Value("${jwt.secret}") String secret) {
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.secret = secret;
     }
 
-    private SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    @Override
+    public void afterPropertiesSet() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+    }
 
     public String createToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()

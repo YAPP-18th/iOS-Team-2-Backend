@@ -39,9 +39,7 @@ public class UserService {
     private final TermsOfServiceRepository termsOfServiceRepository;
 
     public void signUp(SignUpDto signUpDto) {
-        if (userRepository.existsByEmail(signUpDto.getEmail())) {
-            throw new DuplicateRegisterException("이미 가입되어 있는 유저입니다.");
-        }
+        checkEmailDuplicated(signUpDto.getEmail());
 
         Authority authority = new Authority(Role.USER.getName());
 
@@ -74,5 +72,11 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication);
         return new TokenDto(jwt);
+    }
+
+    public void checkEmailDuplicated(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicateRegisterException("이미 가입되어 있는 유저입니다.");
+        }
     }
 }
