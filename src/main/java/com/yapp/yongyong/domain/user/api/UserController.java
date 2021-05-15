@@ -25,9 +25,6 @@ public class UserController {
     private final UserService userService;
 
     @ApiOperation(value = "회원가입")
-    @ApiResponses({
-            @ApiResponse(code = 201, message = "success")
-    })
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signup(@Valid SignUpDto signUpDto) {
         userService.signUp(signUpDto);
@@ -42,5 +39,12 @@ public class UserController {
     public ResponseEntity<CommonApiResponse> login(@Valid @RequestBody LoginDto loginDto) {
         TokenDto token = userService.login(loginDto);
         return ResponseEntity.ok(new CommonApiResponse<>(token));
+    }
+
+    @ApiOperation(value = "이메일 중복 체크")
+    @GetMapping("/check/email")
+    public ResponseEntity<Void> checkEmailDuplicated(@RequestParam String email) {
+        userService.checkEmailDuplicated(email);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

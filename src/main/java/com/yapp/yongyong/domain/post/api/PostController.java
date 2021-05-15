@@ -5,7 +5,6 @@ import com.yapp.yongyong.domain.post.dto.PostRequestDto;
 import com.yapp.yongyong.domain.post.dto.PostResponseDto;
 import com.yapp.yongyong.domain.post.service.PostService;
 import com.yapp.yongyong.domain.user.domain.User;
-import com.yapp.yongyong.domain.user.dto.TokenDto;
 import com.yapp.yongyong.global.domain.CommonApiResponse;
 import com.yapp.yongyong.global.jwt.LoginUser;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @Slf4j
