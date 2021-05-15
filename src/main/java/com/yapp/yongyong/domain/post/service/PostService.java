@@ -30,24 +30,32 @@ public class PostService {
     private final Uploader uploader;
 
     public Post addPost(PostRequestDto postRequestDto, User user) {
-        Place findPlace = placeRepository.findByNameAndLocation(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation())
-                .orElseGet(() -> {
+        Place findPlace = placeRepository.findByNameAndLocation(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation()).orElseGet(
+                () -> {
                     Place newPlace = new Place(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation());
                     return placeRepository.save(newPlace);
                 });
         findPlace.addReviewCount();
         Post savePost = postRepository.save(PostMapper.INSTANCE.toEntity(postRequestDto, findPlace, user));
-        postRequestDto.getPostImages()
-                .forEach(image -> {
-                    PostImage savePostImage = postImageRepository.save(new PostImage(uploader.upload(image, POST), savePost));
-                    savePost.getPostImages().add(savePostImage);
-                });
-        postRequestDto.getContainers()
-                .forEach(containerDto -> {
+        addPostImages(postRequestDto, savePost);
+        addPostContainers(postRequestDto, savePost);
+        return savePost;
+    }
+
+    private void addPostContainers(PostRequestDto postRequestDto, Post savePost) {
+        postRequestDto.getContainers().forEach(
+                containerDto -> {
                     Container findContainer = containerRepository.findById(containerDto.getContainerId()).orElse(new Container());
                     PostContainer postContainer = postContainerRepository.save(PostMapper.INSTANCE.toEntity(containerDto, findContainer, savePost));
                 });
-        return savePost;
+    }
+
+    private void addPostImages(PostRequestDto postRequestDto, Post savePost) {
+        postRequestDto.getPostImages().forEach(
+                image -> {
+                    PostImage savePostImage = postImageRepository.save(new PostImage(uploader.upload(image, POST), savePost));
+                    savePost.getPostImages().add(savePostImage);
+                });
     }
 
     public List<PostResponseDto> getPostsByPlace(String name, String location) {
