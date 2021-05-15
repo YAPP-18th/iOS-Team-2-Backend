@@ -1,7 +1,8 @@
 package com.yapp.yongyong.domain.post.api;
 
+import com.yapp.yongyong.domain.post.domain.Container;
+import com.yapp.yongyong.domain.post.domain.Place;
 import com.yapp.yongyong.domain.post.service.PlaceService;
-import com.yapp.yongyong.domain.user.dto.TokenDto;
 import com.yapp.yongyong.global.domain.CommonApiResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,13 +20,23 @@ import org.springframework.web.bind.annotation.*;
 public class PlaceController {
     private final PlaceService placeService;
 
-    @ApiOperation(value = "가게별 주제 쓰이는 용기들 조회")
+    @ApiOperation(value = "가게별 자주 쓰이는 용기들 조회")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "success", response = TokenDto.class)
+            @ApiResponse(code = 200, message = "success", response = Container.class)
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('GUEST','USER')")
-    public ResponseEntity<CommonApiResponse> addPost(@RequestParam String name, @RequestParam String place) {
+    public ResponseEntity<CommonApiResponse> getContainers(@RequestParam String name, @RequestParam String place) {
         return ResponseEntity.ok(new CommonApiResponse(placeService.getBestContainersByPlace(name,place)));
+    }
+
+    @ApiOperation(value = "같은 이름의 가게들 리뷰 수 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = Place.class)
+    })
+    @GetMapping("/review-count")
+    @PreAuthorize("hasAnyRole('GUEST','USER')")
+    public ResponseEntity<CommonApiResponse> getReviewCounts(@RequestParam String name) {
+        return ResponseEntity.ok(new CommonApiResponse(placeService.getReviewCountsByName(name)));
     }
 }
