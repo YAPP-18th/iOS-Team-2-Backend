@@ -33,6 +33,7 @@ spring:
 
 jwt:
   header: Authorization
+  secret: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
   token-validity-in-seconds: 86400
 
 cloud:
