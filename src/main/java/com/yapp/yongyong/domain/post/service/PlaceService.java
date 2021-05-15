@@ -36,4 +36,8 @@ public class PlaceService {
 
         return collect.subList(0, collect.size() > 3 ? 3 : collect.size());
     }
+
+    public List<Place> getReviewCountsByName(String name) {
+        return placeRepository.findAllByName(name);
+    }
 }
