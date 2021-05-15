@@ -17,6 +17,7 @@ import java.util.List;
 public interface PostMapper {
     PostMapper INSTANCE = Mappers.getMapper(PostMapper.class);
 
+    @Mapping(source = "id",target="postId")
     @Mapping(source = "user.nickname", target = "writer")
     @Mapping(source = "post.postImages", target = "images")
     @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
