@@ -10,6 +10,7 @@ import com.yapp.yongyong.domain.user.dto.TokenDto;
 import com.yapp.yongyong.domain.user.error.DuplicateRegisterException;
 import com.yapp.yongyong.domain.user.repository.TermsOfServiceRepository;
 import com.yapp.yongyong.domain.user.repository.UserRepository;
+import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.global.jwt.TokenProvider;
 import com.yapp.yongyong.infra.uploader.Uploader;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +78,12 @@ public class UserService {
     public void checkEmailDuplicated(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new DuplicateRegisterException("이미 가입되어 있는 유저입니다.");
+        }
+    }
+
+    public void existUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotExistException("존재하지 않는 유저입니다.");
         }
     }
 }

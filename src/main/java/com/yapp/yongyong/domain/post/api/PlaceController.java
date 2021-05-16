@@ -1,6 +1,6 @@
 package com.yapp.yongyong.domain.post.api;
 
-import com.yapp.yongyong.domain.post.domain.Container;
+import com.yapp.yongyong.domain.post.domain.ContainerName;
 import com.yapp.yongyong.domain.post.domain.Place;
 import com.yapp.yongyong.domain.post.service.PlaceService;
 import com.yapp.yongyong.global.domain.CommonApiResponse;
@@ -22,7 +22,7 @@ public class PlaceController {
 
     @ApiOperation(value = "가게별 자주 쓰이는 용기들 조회")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "success", response = Container.class)
+            @ApiResponse(code = 200, message = "success", response = ContainerName.class)
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('GUEST','USER')")
