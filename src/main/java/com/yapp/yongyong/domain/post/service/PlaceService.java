@@ -1,7 +1,9 @@
 package com.yapp.yongyong.domain.post.service;
 
-import com.yapp.yongyong.domain.post.domain.Container;
+import com.yapp.yongyong.domain.post.domain.ContainerName;
+import com.yapp.yongyong.domain.post.domain.ContainerSize;
 import com.yapp.yongyong.domain.post.domain.Place;
+import com.yapp.yongyong.domain.post.dto.ContainerDto;
 import com.yapp.yongyong.domain.post.repository.PlaceRepository;
 import com.yapp.yongyong.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,19 +20,20 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final PostRepository postRepository;
 
-    public List<Container> getBestContainersByPlace(String name, String location) {
+    public List<ContainerDto> getBestContainersByPlace(String name, String location) {
         Optional<Place> findPlace = placeRepository.findByNameAndLocation(name, location);
 
         if (findPlace.isEmpty()) {
             return Arrays.asList();
         }
 
-        List<Container> collect = postRepository.findAllByPlace(findPlace.get()).stream()
+        List<ContainerDto> collect = postRepository.findAllByPlace(findPlace.get()).stream()
                 .flatMap(post -> post.getPostContainers().stream())
-                .collect(Collectors.toMap(postContainer -> postContainer.getContainer(), postContainer -> 1, (v1, v2) -> (v1 + v2)))
+                .collect(Collectors.toMap(postContainer -> new ContainerDto(postContainer.getContainerName(), postContainer.getContainerSize()),
+                        postContainer -> 1, Integer::sum))
                 .entrySet()
                 .stream()
-                .sorted(Map.Entry.<Container,Integer>comparingByValue().reversed())
+                .sorted(Map.Entry.<ContainerDto,Integer>comparingByValue().reversed())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 

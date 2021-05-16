@@ -11,34 +11,40 @@ import org.mapstruct.Mapping;
 
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
-
 @Mapper
 public interface PostMapper {
     PostMapper INSTANCE = Mappers.getMapper(PostMapper.class);
 
-    @Mapping(source = "id",target="postId")
+    @Mapping(source = "id", target = "postId")
     @Mapping(source = "user.nickname", target = "writer")
     @Mapping(source = "post.postImages", target = "images")
+    @Mapping(source = "post.postContainers", target = "postContainers")
     @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
+    @Mapping(expression = "java(post.getComments().size())", target = "commentCount")
     PostResponseDto toDto(Post post);
 
     @Mapping(source = "dto.content", target = "content")
     Post toEntity(PostRequestDto dto, Place place, User user);
 
-    @Mapping(target = "id",ignore = true)
+    @Mapping(source = "post", target = "post")
+    @Mapping(expression = "java(toContainerName(dto.getContainer()))", target = "containerName")
+    @Mapping(expression = "java(toContainerSize(dto.getContainer()))", target = "containerSize")
     @Mapping(source = "dto.containerCount", target = "containerCount")
     @Mapping(source = "dto.foodCount", target = "foodCount")
     @Mapping(source = "dto.food", target = "food")
-    PostContainer toEntity(ContainerDto dto, Container container, Post post);
+    PostContainer toEntity(PostContainerDto dto, Post post);
 
-    List<PostContainerDto> convert(List<PostContainer> postContainers);
+    @Mapping(source = "postContainer.containerName", target = "container.name")
+    @Mapping(source = "postContainer.containerSize", target = "container.size")
+    PostContainerDto toDto(PostContainer postContainer);
 
-    @Mapping(source = "container.name", target = "containerName")
-    @Mapping(source = "container.size", target = "containerSize")
-    PostContainerDto convert(PostContainer postContainer);
+    default String toContainerSize(ContainerDto containerDto) {
+        return ContainerSize.validateSize(containerDto.getSize());
+    }
 
-    List<String> toImageList(List<PostImage> postImages);
+    default String toContainerName(ContainerDto containerDto) {
+        return ContainerName.validateNmae(containerDto.getName());
+    }
 
     default String toImage(PostImage postImage) {
         return postImage.getImageUrl();

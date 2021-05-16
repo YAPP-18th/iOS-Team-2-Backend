@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class PostRequestDto {
     private List<MultipartFile> postImages;
-    private List<ContainerDto> containers;
+    private List<PostContainerDto> containers;
     private String content;
     private String reviewBadge;
     private String placeName;

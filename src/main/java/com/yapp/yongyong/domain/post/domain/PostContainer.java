@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Table(name = "posts_containers")
 @Entity
 public class PostContainer {
@@ -20,9 +20,11 @@ public class PostContainer {
     @Column(name = "food_count")
     private Integer foodCount;
 
-    @OneToOne
-    @JoinColumn(name = "container_id")
-    private Container container;
+    @Column(name = "container_name")
+    private String containerName;
+
+    @Column(name = "container_size")
+    private String containerSize;
 
     @Column(name = "container_count")
     private Integer containerCount;
@@ -31,16 +33,13 @@ public class PostContainer {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    public void setPost(Post post) {
-        this.post = post;
-        post.getPostContainers().add(this);
-    }
-
     @Builder
-    public PostContainer(String food, Integer foodCount, Container container, Integer containerCount) {
+    public PostContainer(String food, Integer foodCount, String containerName, String containerSize, Integer containerCount, Post post) {
         this.food = food;
         this.foodCount = foodCount;
-        this.container = container;
+        this.containerName = containerName;
+        this.containerSize = containerSize;
         this.containerCount = containerCount;
+        this.post = post;
     }
 }
