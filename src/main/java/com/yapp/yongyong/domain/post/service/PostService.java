@@ -1,11 +1,13 @@
 package com.yapp.yongyong.domain.post.service;
 
 import com.yapp.yongyong.domain.post.domain.*;
-import com.yapp.yongyong.domain.post.dto.PostRequestDto;
-import com.yapp.yongyong.domain.post.dto.PostResponseDto;
+import com.yapp.yongyong.domain.post.dto.*;
+import com.yapp.yongyong.domain.post.mapper.CommentMapper;
 import com.yapp.yongyong.domain.post.mapper.PostMapper;
 import com.yapp.yongyong.domain.post.repository.*;
 import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.service.UserService;
+import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.infra.uploader.Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +24,12 @@ import java.util.stream.Collectors;
 public class PostService {
     private static final String POST = "post";
 
+    private final UserService userService;
     private final PostRepository postRepository;
     private final PlaceRepository placeRepository;
     private final PostContainerRepository postContainerRepository;
-    private final ContainerRepository containerRepository;
     private final PostImageRepository postImageRepository;
+    private final CommentRepository commentRepository;
     private final Uploader uploader;
 
     public Post addPost(PostRequestDto postRequestDto, User user) {
@@ -44,18 +47,13 @@ public class PostService {
 
     private void addPostContainers(PostRequestDto postRequestDto, Post savePost) {
         postRequestDto.getContainers().forEach(
-                containerDto -> {
-                    Container findContainer = containerRepository.findById(containerDto.getContainerId()).orElse(new Container());
-                    PostContainer postContainer = postContainerRepository.save(PostMapper.INSTANCE.toEntity(containerDto, findContainer, savePost));
-                });
+                containerDto -> postContainerRepository.save(PostMapper.INSTANCE.toEntity(containerDto, savePost)));
     }
 
     private void addPostImages(PostRequestDto postRequestDto, Post savePost) {
         postRequestDto.getPostImages().forEach(
-                image -> {
-                    PostImage savePostImage = postImageRepository.save(new PostImage(uploader.upload(image, POST), savePost));
-                    savePost.getPostImages().add(savePostImage);
-                });
+                image -> savePost.getPostImages().add(postImageRepository.save(new PostImage(uploader.upload(image, POST), savePost)))
+                );
     }
 
     public List<PostResponseDto> getPostsByPlace(String name, String location) {
@@ -63,8 +61,46 @@ public class PostService {
         if (findPlace.isEmpty()) {
             return Arrays.asList();
         }
+
         return postRepository.findAllByPlace(findPlace.get()).stream()
                 .map(PostMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
+    }
+
+    private Post existPost(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new NotExistException("존재 하지 않는 게시물입니다."));
+    }
+
+    public void addComment(Long postId, CommentRequestDto commentRequestDto, User user) {
+        Post post = existPost(postId);
+        userService.existUser(user.getId());
+        Comment saveComment = commentRepository.save(new Comment(commentRequestDto.getContent(), user, post));
+        post.getComments().add(saveComment);
+    }
+
+    public void editComment(Long postId, Long commentId, CommentEditRequestDto dto, User user) {
+        Post post = existPost(postId);
+        userService.existUser(user.getId());
+        Comment findComment = getCommentById(commentId);
+        findComment.update(dto.getContent());
+    }
+
+    public List<CommentResponseDto> getComments(Long postId) {
+        return commentRepository.findAllByPostId(postId).stream()
+                .map(CommentMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteComment(Long postId, Long commentId) {
+        Post post = existPost(postId);
+        Comment findComment = getCommentById(commentId);
+        post.getComments().remove(findComment);
+        commentRepository.delete(findComment);
+    }
+
+    private Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotExistException("존재 하지 않는 댓글입니다."));
     }
 }

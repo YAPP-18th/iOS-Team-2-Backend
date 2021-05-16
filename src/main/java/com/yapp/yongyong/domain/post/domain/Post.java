@@ -10,9 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,25 +29,25 @@ public class Post extends BaseTimeEntity {
     @Column(name = "like_count")
     private Integer likeCount;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "place_id")
     private Place place;
 
     @Column(name = "review_badge")
     private String reviewBadge;
 
-    @OneToMany(mappedBy = "post")
-    List<PostContainer> postContainers = new ArrayList<>();
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    Set<PostContainer> postContainers = new HashSet<>();
 
-    @OneToMany(mappedBy = "post")
-    List<PostImage> postImages = new ArrayList<>();
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    Set<PostImage> postImages = new HashSet<>();
 
-    @OneToMany(mappedBy = "post")
-    List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    Set<Comment> comments = new HashSet<>();
 
     @Builder
     public Post(String content, User user, Place place, String reviewBadge) {

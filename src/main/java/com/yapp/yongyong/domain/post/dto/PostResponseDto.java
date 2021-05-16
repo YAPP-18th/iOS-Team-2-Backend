@@ -15,4 +15,5 @@ public class PostResponseDto {
     private List<PostContainerDto> postContainers;
     private LocalDate createdDate;
     private String reviewBadge;
+    private Integer commentCount;
 }
