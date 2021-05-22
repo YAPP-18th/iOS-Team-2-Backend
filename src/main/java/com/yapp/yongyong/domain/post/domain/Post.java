@@ -40,13 +40,13 @@ public class Post extends BaseTimeEntity {
     @Column(name = "review_badge")
     private String reviewBadge;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<PostContainer> postContainers = new HashSet<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<PostImage> postImages = new HashSet<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<Comment> comments = new HashSet<>();
 
     @Builder

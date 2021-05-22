@@ -7,6 +7,7 @@ import com.yapp.yongyong.domain.post.mapper.PostMapper;
 import com.yapp.yongyong.domain.post.repository.*;
 import com.yapp.yongyong.domain.user.domain.User;
 import com.yapp.yongyong.domain.user.service.UserService;
+import com.yapp.yongyong.global.error.NotDataEqualsException;
 import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.infra.uploader.Uploader;
 import lombok.RequiredArgsConstructor;
@@ -52,8 +53,12 @@ public class PostService {
 
     private void addPostImages(PostRequestDto postRequestDto, Post savePost) {
         postRequestDto.getPostImages().forEach(
-                image -> savePost.getPostImages().add(postImageRepository.save(new PostImage(uploader.upload(image, POST), savePost)))
-                );
+                image -> {
+                    if (!image.isEmpty()) {
+                        postImageRepository.save(new PostImage(uploader.upload(image, POST), savePost));
+                    }
+                }
+        );
     }
 
     public List<PostResponseDto> getPostsByPlace(String name, String location) {
@@ -65,6 +70,18 @@ public class PostService {
         return postRepository.findAllByPlace(findPlace.get()).stream()
                 .map(PostMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public void editPost(Long postId, PostRequestDto postRequestDto, User user) {
+        Post post = existPost(postId);
+    }
+
+    public void deletePost(Long postId, User user) {
+        Post post = existPost(postId);
+        if (!post.getUser().equals(user)) {
+            throw new NotDataEqualsException("본인 게시물만 삭제할 수 있습니다.");
+        }
+        postRepository.delete(post);
     }
 
     private Post existPost(Long postId) {
@@ -83,6 +100,9 @@ public class PostService {
         Post post = existPost(postId);
         userService.existUser(user.getId());
         Comment findComment = getCommentById(commentId);
+        if (!findComment.getUser().equals(user)) {
+            throw new NotDataEqualsException("본인 게시물만 수정할 수 있습니다.");
+        }
         findComment.update(dto.getContent());
     }
 
@@ -92,9 +112,12 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteComment(Long postId, Long commentId) {
+    public void deleteComment(Long postId, Long commentId, User user) {
         Post post = existPost(postId);
         Comment findComment = getCommentById(commentId);
+        if (!findComment.getUser().equals(user)) {
+            throw new NotDataEqualsException("본인 댓글만 수정할 수 있습니다.");
+        }
         post.getComments().remove(findComment);
         commentRepository.delete(findComment);
     }

@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name="authorities")
+@Table(name = "authorities")
 @Entity
 public class Authority {
 

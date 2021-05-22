@@ -43,7 +43,7 @@ class UserServiceTest {
     private Uploader uploader;
 
     @Test
-    public void 회원가입테스트(){
+    public void 회원가입테스트() {
         //given
         MockMultipartFile file = new MockMultipartFile("multipartFile", "test.txt", "text/plain", "hello file".getBytes());
         Authority authority = new Authority(Role.USER.getName());

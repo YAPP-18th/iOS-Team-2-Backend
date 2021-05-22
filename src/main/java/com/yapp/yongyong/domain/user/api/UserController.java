@@ -41,6 +41,16 @@ public class UserController {
         return ResponseEntity.ok(new CommonApiResponse<>(token));
     }
 
+    @ApiOperation(value = "비회원 로그인")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = TokenDto.class)
+    })
+    @PostMapping("/login/guest")
+    public ResponseEntity<CommonApiResponse> loginByGuest() {
+        TokenDto token = userService.loginByGuest();
+        return ResponseEntity.ok(new CommonApiResponse<>(token));
+    }
+
     @ApiOperation(value = "이메일 중복 체크")
     @GetMapping("/check/email")
     public ResponseEntity<Void> checkEmailDuplicated(@RequestParam String email) {

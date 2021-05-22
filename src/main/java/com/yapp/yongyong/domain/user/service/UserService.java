@@ -75,6 +75,10 @@ public class UserService {
         return new TokenDto(jwt);
     }
 
+    public TokenDto loginByGuest(){
+        return new TokenDto(tokenProvider.createTokenByGuest());
+    }
+
     public void checkEmailDuplicated(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new DuplicateRegisterException("이미 가입되어 있는 유저입니다.");

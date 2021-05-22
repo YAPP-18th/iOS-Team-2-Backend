@@ -21,13 +21,13 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-        sendErrorMessage(response, JwtErrorCode.UNDER_ROLE,accessDeniedException.getMessage());
+        sendErrorMessage(response, JwtErrorCode.UNDER_ROLE, accessDeniedException.getMessage());
     }
 
     private void sendErrorMessage(HttpServletResponse res, ErrorCode errorCode, String message) throws IOException {
         res.setStatus(HttpServletResponse.SC_FORBIDDEN);
         res.setContentType(MediaType.APPLICATION_JSON.toString());
         res.getWriter().write(this.objectMapper
-                .writeValueAsString( ErrorResponse.of(errorCode,message)));
+                .writeValueAsString(ErrorResponse.of(errorCode, message)));
     }
 }

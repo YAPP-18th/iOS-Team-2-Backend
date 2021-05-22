@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name="users")
+@Table(name = "users")
 @Entity
 public class User extends BaseTimeEntity {
     @Id
@@ -30,9 +30,9 @@ public class User extends BaseTimeEntity {
 
     @ManyToMany
     @JoinTable(
-            name="users_authorities",
-            joinColumns = {@JoinColumn(name="user_id",referencedColumnName = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name="authority_name", referencedColumnName = "authority_name")})
+            name = "users_authorities",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
     private Set<Authority> authorities;
 
     @Column(name = "nickname")
@@ -59,18 +59,18 @@ public class User extends BaseTimeEntity {
         this.provider = provider;
     }
 
-    public User update(String name, String picture){
+    public User update(String name, String picture) {
         this.nickname = name;
         this.imageUrl = picture;
 
         return this;
     }
 
-    public String getUserRoleKey(){
+    public String getUserRoleKey() {
         return authorities.stream()
                 .filter(authority -> authority.getAuthorityName().equals(Role.USER.getName()))
                 .map(Authority::getAuthorityName)
                 .findAny()
-                .orElseThrow(()->new NotExistException("유저 권한이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotExistException("유저 권한이 존재하지 않습니다."));
     }
 }

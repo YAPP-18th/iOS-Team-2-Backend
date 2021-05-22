@@ -1,10 +1,7 @@
 package com.yapp.yongyong.domain.post.api;
 
 import com.yapp.yongyong.domain.post.domain.Post;
-import com.yapp.yongyong.domain.post.dto.CommentEditRequestDto;
-import com.yapp.yongyong.domain.post.dto.CommentRequestDto;
-import com.yapp.yongyong.domain.post.dto.PostRequestDto;
-import com.yapp.yongyong.domain.post.dto.PostResponseDto;
+import com.yapp.yongyong.domain.post.dto.*;
 import com.yapp.yongyong.domain.post.service.PostService;
 import com.yapp.yongyong.domain.user.domain.User;
 import com.yapp.yongyong.global.domain.CommonApiResponse;
@@ -29,7 +26,7 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
-    @ApiOperation(value = "게시물 올리기")
+    @ApiOperation(value = "게시물 생성하기")
     @PostMapping
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Void> addPost(PostRequestDto postRequestDto, @LoginUser User user) {
@@ -48,7 +45,23 @@ public class PostController {
         return ResponseEntity.ok(new CommonApiResponse(postsByPlace));
     }
 
-    @ApiOperation(value = "댓글 올리기")
+    @ApiOperation(value = "게시물 수정하기")
+    @PutMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Void> editPost(@PathVariable Long postId, PostRequestDto postRequestDto, @LoginUser User user) {
+        postService.editPost(postId, postRequestDto, user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @ApiOperation(value = "게시물 삭제하기")
+    @DeleteMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId, @LoginUser User user) {
+        postService.deletePost(postId, user);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "댓글 생성하기")
     @PostMapping("/{postId}/comment")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Void> addComment(@PathVariable Long postId,
@@ -71,12 +84,16 @@ public class PostController {
     @ApiOperation(value = "댓글 삭제하기")
     @DeleteMapping("/{postId}/comment/{commentId}")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        postService.deleteComment(postId, commentId);
+    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
+                                              @LoginUser User user) {
+        postService.deleteComment(postId, commentId, user);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ApiOperation(value = "댓글들 보기")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = CommentResponseDto.class, responseContainer = "List")
+    })
     @GetMapping("/{postId}/comment")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<CommonApiResponse> getComments(@PathVariable Long postId) {
