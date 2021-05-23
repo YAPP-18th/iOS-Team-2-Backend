@@ -72,6 +72,14 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    public List<PostResponseDto> getPostsByUser(String nickname) {
+        userService.existUser(nickname);
+
+        return postRepository.findAllByUser_Nickname(nickname).stream()
+                .map(PostMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
+    }
+
     public void editPost(Long postId, PostRequestDto postRequestDto, User user) {
         Post post = existPost(postId);
     }

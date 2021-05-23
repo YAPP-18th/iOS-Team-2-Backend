@@ -16,4 +16,6 @@ public class PostResponseDto {
     private LocalDate createdDate;
     private String reviewBadge;
     private Integer commentCount;
+    private String placeName;
+    private String placeLocation;
 }

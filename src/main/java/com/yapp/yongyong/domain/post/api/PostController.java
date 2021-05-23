@@ -34,15 +34,34 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @ApiOperation(value = "가게별 게시물 전체 조회")
+    @ApiOperation(value = "가게별 게시물 전체 조회하기")
     @ApiResponses({
             @ApiResponse(code = 200, message = "success", response = PostResponseDto.class, responseContainer = "List")
     })
     @GetMapping("/place")
     @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<CommonApiResponse> getPostsByPlace(@RequestParam String name, @RequestParam String location) {
-        List<PostResponseDto> postsByPlace = postService.getPostsByPlace(name, location);
-        return ResponseEntity.ok(new CommonApiResponse(postsByPlace));
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByPlace(name, location)));
+    }
+
+    @ApiOperation(value = "사용자 게시물 전체 조회하기")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = PostResponseDto.class, responseContainer = "List")
+    })
+    @GetMapping("/user")
+    @PreAuthorize("hasAnyRole('GUEST','USER')")
+    public ResponseEntity<CommonApiResponse> getPostsByName(@RequestParam String nickname) {
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByUser(nickname)));
+    }
+
+    @ApiOperation(value = "내 게시물 전체 조회하기")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = PostResponseDto.class, responseContainer = "List")
+    })
+    @GetMapping("/user/mine")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<CommonApiResponse> getPostsByName(@LoginUser User user) {
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByUser(user.getNickname())));
     }
 
     @ApiOperation(value = "게시물 수정하기")

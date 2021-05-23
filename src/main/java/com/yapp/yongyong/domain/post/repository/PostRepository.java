@@ -11,4 +11,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user"})
     List<Post> findAllByPlace(Place place);
+
+    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user"})
+    List<Post> findAllByUser_Nickname(String nickname);
 }
