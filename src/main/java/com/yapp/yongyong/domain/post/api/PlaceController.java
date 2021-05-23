@@ -27,7 +27,7 @@ public class PlaceController {
     @GetMapping
     @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<CommonApiResponse> getContainers(@RequestParam String name, @RequestParam String place) {
-        return ResponseEntity.ok(new CommonApiResponse(placeService.getBestContainersByPlace(name,place)));
+        return ResponseEntity.ok(new CommonApiResponse(placeService.getBestContainersByPlace(name, place)));
     }
 
     @ApiOperation(value = "같은 이름의 가게들 리뷰 수 조회")

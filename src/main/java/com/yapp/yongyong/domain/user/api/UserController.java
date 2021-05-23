@@ -37,14 +37,29 @@ public class UserController {
     })
     @PostMapping("/login")
     public ResponseEntity<CommonApiResponse> login(@Valid @RequestBody LoginDto loginDto) {
-        TokenDto token = userService.login(loginDto);
-        return ResponseEntity.ok(new CommonApiResponse<>(token));
+        return ResponseEntity.ok(new CommonApiResponse<>(userService.login(loginDto)));
+    }
+
+    @ApiOperation(value = "비회원 로그인")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = TokenDto.class)
+    })
+    @PostMapping("/login/guest")
+    public ResponseEntity<CommonApiResponse> loginByGuest() {
+        return ResponseEntity.ok(new CommonApiResponse<>(userService.loginByGuest()));
     }
 
     @ApiOperation(value = "이메일 중복 체크")
     @GetMapping("/check/email")
     public ResponseEntity<Void> checkEmailDuplicated(@RequestParam String email) {
         userService.checkEmailDuplicated(email);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "닉네임 중복 체크")
+    @GetMapping("/check/nickname")
+    public ResponseEntity<Void> checkNicknameDuplicated(@RequestParam String nickname) {
+        userService.checkNicknameDuplicated(nickname);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

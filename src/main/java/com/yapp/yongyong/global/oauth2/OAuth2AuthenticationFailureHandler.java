@@ -24,13 +24,13 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        sendErrorMessage(response, GlobalErrorCode.OAUTH2_NOT_WORK,exception.getMessage());
+        sendErrorMessage(response, GlobalErrorCode.OAUTH2_NOT_WORK, exception.getMessage());
     }
 
     private void sendErrorMessage(HttpServletResponse res, ErrorCode errorCode, String message) throws IOException {
         res.setStatus(HttpServletResponse.SC_FORBIDDEN);
         res.setContentType(MediaType.APPLICATION_JSON.toString());
         res.getWriter().write(this.objectMapper
-                .writeValueAsString( ErrorResponse.of(errorCode,message)));
+                .writeValueAsString(ErrorResponse.of(errorCode, message)));
     }
 }

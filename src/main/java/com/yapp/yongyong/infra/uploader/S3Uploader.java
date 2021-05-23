@@ -29,7 +29,7 @@ public class S3Uploader implements Uploader {
     public String bucket;
 
     public String upload(MultipartFile multipartFile, String dirName) {
-        if(multipartFile.isEmpty()){
+        if (multipartFile.isEmpty()) {
             return "";
         }
         File convertedFile = null;

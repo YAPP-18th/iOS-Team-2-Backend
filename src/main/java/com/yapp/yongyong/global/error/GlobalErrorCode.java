@@ -13,7 +13,8 @@ public enum GlobalErrorCode implements ErrorCode {
     IO_NOT_WORK("G003", "IO Not Work"),
     NOT_DELTE_ERROR("G004", "Not Delete Completed"),
     OAUTH2_NOT_WORK("G005", "OAuth2 Not Work"),
-    BAD_REQUEST("G006", "Bad Request");
+    BAD_REQUEST("G006", "Bad Request"),
+    NOT_EQUAL("G007", "Not Equals");
 
     private final String code;
     private final String message;

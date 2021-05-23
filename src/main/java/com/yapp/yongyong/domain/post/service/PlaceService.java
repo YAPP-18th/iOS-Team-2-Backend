@@ -33,7 +33,7 @@ public class PlaceService {
                         postContainer -> 1, Integer::sum))
                 .entrySet()
                 .stream()
-                .sorted(Map.Entry.<ContainerDto,Integer>comparingByValue().reversed())
+                .sorted(Map.Entry.<ContainerDto, Integer>comparingByValue().reversed())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
