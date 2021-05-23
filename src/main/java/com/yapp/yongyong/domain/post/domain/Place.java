@@ -36,7 +36,7 @@ public class Place extends BaseTimeEntity {
         this.reviewCount = 0;
     }
 
-    public void addReviewCount(){
+    public void addReviewCount() {
         this.reviewCount++;
     }
 }

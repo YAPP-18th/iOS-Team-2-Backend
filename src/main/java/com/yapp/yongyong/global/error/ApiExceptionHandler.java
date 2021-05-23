@@ -36,4 +36,12 @@ public class ApiExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(GlobalErrorCode.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(NotDataEqualsException.class)
+    protected ResponseEntity<ErrorResponse> handleNotDataEqualsException(NotDataEqualsException e) {
+        log.error("NotDataEqualsException", e);
+        final ErrorResponse response = ErrorResponse.of(e.getErrorCode(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }

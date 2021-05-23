@@ -19,6 +19,8 @@ public interface PostMapper {
     @Mapping(source = "user.nickname", target = "writer")
     @Mapping(source = "post.postImages", target = "images")
     @Mapping(source = "post.postContainers", target = "postContainers")
+    @Mapping(source = "post.place.name", target = "placeName")
+    @Mapping(source = "post.place.location", target = "placeLocation")
     @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
     @Mapping(expression = "java(post.getComments().size())", target = "commentCount")
     PostResponseDto toDto(Post post);

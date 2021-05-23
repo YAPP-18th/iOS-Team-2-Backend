@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name="terms_of_service")
+@Table(name = "terms_of_service")
 @Entity
 public class TermsOfService extends BaseTimeEntity {
     @Id

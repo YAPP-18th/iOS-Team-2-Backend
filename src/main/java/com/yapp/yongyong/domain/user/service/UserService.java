@@ -41,6 +41,7 @@ public class UserService {
 
     public void signUp(SignUpDto signUpDto) {
         checkEmailDuplicated(signUpDto.getEmail());
+        checkNicknameDuplicated(signUpDto.getNickname());
 
         Authority authority = new Authority(Role.USER.getName());
 
@@ -75,14 +76,30 @@ public class UserService {
         return new TokenDto(jwt);
     }
 
+    public TokenDto loginByGuest(){
+        return new TokenDto(tokenProvider.createTokenByGuest());
+    }
+
     public void checkEmailDuplicated(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new DuplicateRegisterException("이미 가입되어 있는 유저입니다.");
         }
     }
 
+    public void checkNicknameDuplicated(String nickname){
+        if (userRepository.existsByNickname(nickname)){
+            throw new DuplicateRegisterException("이미 가입되어 있는 닉네임입니다.");
+        }
+    }
+
     public void existUser(Long userId) {
         if (!userRepository.existsById(userId)) {
+            throw new NotExistException("존재하지 않는 유저입니다.");
+        }
+    }
+
+    public void existUser(String nickname){
+        if(!userRepository.existsByNickname(nickname)){
             throw new NotExistException("존재하지 않는 유저입니다.");
         }
     }
