@@ -5,7 +5,7 @@ import com.yapp.yongyong.domain.user.dto.LoginDto;
 import com.yapp.yongyong.domain.user.dto.SignUpDto;
 import com.yapp.yongyong.domain.user.dto.TokenDto;
 import com.yapp.yongyong.domain.user.service.UserService;
-import com.yapp.yongyong.global.domain.CommonApiResponse;
+import com.yapp.yongyong.global.entity.CommonApiResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

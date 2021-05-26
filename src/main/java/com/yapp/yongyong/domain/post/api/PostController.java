@@ -1,10 +1,10 @@
 package com.yapp.yongyong.domain.post.api;
 
-import com.yapp.yongyong.domain.post.domain.Post;
+import com.yapp.yongyong.domain.post.entity.Post;
 import com.yapp.yongyong.domain.post.dto.*;
 import com.yapp.yongyong.domain.post.service.PostService;
-import com.yapp.yongyong.domain.user.domain.User;
-import com.yapp.yongyong.global.domain.CommonApiResponse;
+import com.yapp.yongyong.domain.user.entity.User;
+import com.yapp.yongyong.global.entity.CommonApiResponse;
 import com.yapp.yongyong.global.jwt.LoginUser;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -17,7 +17,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -50,8 +49,8 @@ public class PostController {
     })
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('GUEST','USER')")
-    public ResponseEntity<CommonApiResponse> getPostsByName(@RequestParam String nickname) {
-        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByUser(nickname)));
+    public ResponseEntity<CommonApiResponse> getPostsByName(@RequestParam Long userId) {
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByUser(userId)));
     }
 
     @ApiOperation(value = "내 게시물 전체 조회하기")
@@ -61,7 +60,7 @@ public class PostController {
     @GetMapping("/user/mine")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<CommonApiResponse> getPostsByName(@LoginUser User user) {
-        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByUser(user.getNickname())));
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByUser(user.getId())));
     }
 
     @ApiOperation(value = "게시물 수정하기")

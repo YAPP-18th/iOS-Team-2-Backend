@@ -1,9 +1,9 @@
 package com.yapp.yongyong.domain.user.service;
 
-import com.yapp.yongyong.domain.user.domain.Authority;
-import com.yapp.yongyong.domain.user.domain.Role;
-import com.yapp.yongyong.domain.user.domain.TermsOfService;
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.entity.Authority;
+import com.yapp.yongyong.domain.user.entity.Role;
+import com.yapp.yongyong.domain.user.entity.TermsOfService;
+import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.dto.LoginDto;
 import com.yapp.yongyong.domain.user.dto.SignUpDto;
 import com.yapp.yongyong.domain.user.dto.TokenDto;

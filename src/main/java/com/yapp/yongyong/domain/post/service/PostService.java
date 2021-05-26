@@ -1,11 +1,11 @@
 package com.yapp.yongyong.domain.post.service;
 
-import com.yapp.yongyong.domain.post.domain.*;
+import com.yapp.yongyong.domain.post.entity.*;
 import com.yapp.yongyong.domain.post.dto.*;
 import com.yapp.yongyong.domain.post.mapper.CommentMapper;
 import com.yapp.yongyong.domain.post.mapper.PostMapper;
 import com.yapp.yongyong.domain.post.repository.*;
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.error.NotDataEqualsException;
 import com.yapp.yongyong.global.error.NotExistException;
@@ -72,10 +72,10 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostResponseDto> getPostsByUser(String nickname) {
-        userService.existUser(nickname);
+    public List<PostResponseDto> getPostsByUser(Long userId) {
+        userService.existUser(userId);
 
-        return postRepository.findAllByUser_Nickname(nickname).stream()
+        return postRepository.findAllByUser_Id(userId).stream()
                 .map(PostMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }

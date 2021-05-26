@@ -1,7 +1,7 @@
 package com.yapp.yongyong.domain.post.service;
 
-import com.yapp.yongyong.domain.post.domain.ContainerName;
-import com.yapp.yongyong.domain.post.domain.ContainerSize;
+import com.yapp.yongyong.domain.post.entity.ContainerName;
+import com.yapp.yongyong.domain.post.entity.ContainerSize;
 import com.yapp.yongyong.domain.post.dto.ContainerDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

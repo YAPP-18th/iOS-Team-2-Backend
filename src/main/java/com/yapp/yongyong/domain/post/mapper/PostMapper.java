@@ -1,11 +1,13 @@
 package com.yapp.yongyong.domain.post.mapper;
 
-import com.yapp.yongyong.domain.post.domain.*;
+import com.yapp.yongyong.domain.post.entity.*;
 import com.yapp.yongyong.domain.post.dto.ContainerDto;
 import com.yapp.yongyong.domain.post.dto.PostContainerDto;
 import com.yapp.yongyong.domain.post.dto.PostRequestDto;
 import com.yapp.yongyong.domain.post.dto.PostResponseDto;
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.dto.UserDto;
+import com.yapp.yongyong.domain.user.entity.User;
+import com.yapp.yongyong.domain.user.mapper.UserMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -16,7 +18,6 @@ public interface PostMapper {
     PostMapper INSTANCE = Mappers.getMapper(PostMapper.class);
 
     @Mapping(source = "id", target = "postId")
-    @Mapping(source = "user.nickname", target = "writer")
     @Mapping(source = "post.postImages", target = "images")
     @Mapping(source = "post.postContainers", target = "postContainers")
     @Mapping(source = "post.place.name", target = "placeName")
@@ -52,5 +53,7 @@ public interface PostMapper {
         return postImage.getImageUrl();
     }
 
-
+    default UserDto toUserDto(User user){
+        return UserMapper.INSTANCE.toDto(user);
+    }
 }
