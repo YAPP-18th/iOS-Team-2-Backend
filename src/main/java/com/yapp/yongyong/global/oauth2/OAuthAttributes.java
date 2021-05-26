@@ -1,8 +1,8 @@
 package com.yapp.yongyong.global.oauth2;
 
-import com.yapp.yongyong.domain.user.domain.Authority;
-import com.yapp.yongyong.domain.user.domain.Role;
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.entity.Authority;
+import com.yapp.yongyong.domain.user.entity.Role;
+import com.yapp.yongyong.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 

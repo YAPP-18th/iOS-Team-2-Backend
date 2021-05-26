@@ -1,6 +1,6 @@
 package com.yapp.yongyong.global.jwt;
 
-import com.yapp.yongyong.domain.user.domain.Role;
+import com.yapp.yongyong.domain.user.entity.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
