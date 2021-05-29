@@ -3,6 +3,8 @@ package com.yapp.yongyong.domain.user.entity;
 
 import com.yapp.yongyong.global.entity.BaseTimeEntity;
 import com.yapp.yongyong.global.error.NotExistException;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,23 +13,27 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Set;
 
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 @Entity
 public class User extends BaseTimeEntity {
+
+    @ApiModelProperty(hidden = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
+    @ApiModelProperty(hidden = true)
     @Column(nullable = false, unique = true)
     private String email;
 
+    @ApiModelProperty(hidden = true)
     @Column(name = "password")
     private String password;
 
+    @ApiModelProperty(hidden = true)
     @ManyToMany
     @JoinTable(
             name = "users_authorities",
@@ -35,16 +41,20 @@ public class User extends BaseTimeEntity {
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
     private Set<Authority> authorities;
 
+    @ApiModelProperty(hidden = true)
     @Column(name = "nickname", unique = true)
     private String nickname;
 
+    @ApiModelProperty(hidden = true)
     @Column(name = "image_url")
     @Lob
     private String imageUrl;
 
+    @ApiModelProperty(hidden = true)
     @Column(name = "introduction")
     private String introduction;
 
+    @ApiModelProperty(hidden = true)
     @Column(name = "provider")
     private String provider;
 
