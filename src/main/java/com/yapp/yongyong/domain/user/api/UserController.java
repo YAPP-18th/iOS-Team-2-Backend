@@ -4,8 +4,10 @@ package com.yapp.yongyong.domain.user.api;
 import com.yapp.yongyong.domain.user.dto.LoginDto;
 import com.yapp.yongyong.domain.user.dto.SignUpDto;
 import com.yapp.yongyong.domain.user.dto.TokenDto;
+import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.entity.CommonApiResponse;
+import com.yapp.yongyong.global.jwt.LoginUser;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -61,5 +63,12 @@ public class UserController {
     public ResponseEntity<Void> checkNicknameDuplicated(@RequestParam String nickname) {
         userService.checkNicknameDuplicated(nickname);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "회원탈퇴")
+    @DeleteMapping("/withdrawal")
+    public ResponseEntity<Void> withdraw(@RequestParam Long userId, @LoginUser User user) {
+        userService.withdraw(userId, user);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
