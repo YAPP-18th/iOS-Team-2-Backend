@@ -24,7 +24,20 @@ public interface PostMapper {
     @Mapping(source = "post.place.location", target = "placeLocation")
     @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
     @Mapping(expression = "java(post.getComments().size())", target = "commentCount")
-    PostResponseDto toDto(Post post);
+    @Mapping(expression = "java(post.getLikePosts().size())", target = "likeCount")
+    @Mapping(expression = "java(false)", target = "isLikePressed")
+    PostResponseDto toDtoForGuest(Post post);
+
+    @Mapping(source = "post.id", target = "postId")
+    @Mapping(source = "post.postImages", target = "images")
+    @Mapping(source = "post.postContainers", target = "postContainers")
+    @Mapping(source = "post.place.name", target = "placeName")
+    @Mapping(source = "post.place.location", target = "placeLocation")
+    @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
+    @Mapping(expression = "java(post.getComments().size())", target = "commentCount")
+    @Mapping(expression = "java(post.getLikePosts().size())", target = "likeCount")
+    @Mapping(expression = "java(post.getLikePosts().stream().anyMatch(likePost -> likePost.getUser().getEmail().equals(email)))", target = "isLikePressed")
+    PostResponseDto toDto(Post post, String email);
 
     @Mapping(source = "dto.content", target = "content")
     Post toEntity(PostRequestDto dto, Place place, User user);
@@ -53,7 +66,7 @@ public interface PostMapper {
         return postImage.getImageUrl();
     }
 
-    default UserDto toUserDto(User user){
+    default UserDto toUserDto(User user) {
         return UserMapper.INSTANCE.toDto(user);
     }
 }

@@ -24,9 +24,6 @@ public class Post extends BaseTimeEntity {
     @Lob
     private String content;
 
-    @Column(name = "like_count")
-    private Integer likeCount;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -38,14 +35,17 @@ public class Post extends BaseTimeEntity {
     @Column(name = "review_badge")
     private String reviewBadge;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
     Set<PostContainer> postContainers = new HashSet<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
     Set<PostImage> postImages = new HashSet<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
     Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    Set<LikePost> likePosts = new HashSet<>();
 
     @Builder
     public Post(String content, User user, Place place, String reviewBadge) {
@@ -53,10 +53,5 @@ public class Post extends BaseTimeEntity {
         this.user = user;
         this.place = place;
         this.reviewBadge = reviewBadge;
-    }
-
-    @PrePersist
-    public void checkLikeCount(){
-        this.likeCount = this.likeCount == null ? 0 : this.likeCount;
     }
 }

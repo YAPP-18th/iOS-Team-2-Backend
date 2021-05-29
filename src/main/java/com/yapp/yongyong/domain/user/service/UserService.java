@@ -1,5 +1,6 @@
 package com.yapp.yongyong.domain.user.service;
 
+import com.yapp.yongyong.domain.post.repository.LikePostRepository;
 import com.yapp.yongyong.domain.post.repository.PostRepository;
 import com.yapp.yongyong.domain.user.dto.ProfileEditDto;
 import com.yapp.yongyong.domain.user.entity.Authority;
@@ -42,6 +43,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final TermsOfServiceRepository termsOfServiceRepository;
     private final PostRepository postRepository;
+    private final LikePostRepository likePostRepository;
 
     public void signUp(SignUpDto signUpDto) {
         checkEmailDuplicated(signUpDto.getEmail());
@@ -118,6 +120,7 @@ public class UserService {
         existUser(userId);
         postRepository.deleteAllByUser(user);
         termsOfServiceRepository.deleteByUser(user);
+        likePostRepository.deleteAllByUser(user);
         user.getAuthorities().clear();
         userRepository.delete(user);
     }
