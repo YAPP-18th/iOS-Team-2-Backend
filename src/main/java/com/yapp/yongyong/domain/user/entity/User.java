@@ -66,6 +66,15 @@ public class User extends BaseTimeEntity {
         return this;
     }
 
+    public void updateImage(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
+
+    public void updateNameAndIntroduction(String nickname, String introduction){
+        this.nickname = nickname;
+        this.introduction = introduction;
+    }
+
     public String getUserRoleKey() {
         return authorities.stream()
                 .filter(authority -> authority.getAuthorityName().equals(Role.USER.getName()))
