@@ -1,6 +1,6 @@
-package com.yapp.yongyong.domain.post.domain;
+package com.yapp.yongyong.domain.post.entity;
 
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.global.domain.BaseTimeEntity;
 import lombok.*;
 

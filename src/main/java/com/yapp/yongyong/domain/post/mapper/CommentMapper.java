@@ -1,6 +1,6 @@
 package com.yapp.yongyong.domain.post.mapper;
 
-import com.yapp.yongyong.domain.post.domain.Comment;
+import com.yapp.yongyong.domain.post.entity.Comment;
 import com.yapp.yongyong.domain.post.dto.CommentResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

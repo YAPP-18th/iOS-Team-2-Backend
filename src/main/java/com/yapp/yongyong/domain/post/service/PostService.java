@@ -1,11 +1,14 @@
 package com.yapp.yongyong.domain.post.service;
 
-import com.yapp.yongyong.domain.post.domain.*;
 import com.yapp.yongyong.domain.post.dto.*;
+import com.yapp.yongyong.domain.post.entity.Comment;
+import com.yapp.yongyong.domain.post.entity.Place;
+import com.yapp.yongyong.domain.post.entity.Post;
+import com.yapp.yongyong.domain.post.entity.PostImage;
 import com.yapp.yongyong.domain.post.mapper.CommentMapper;
 import com.yapp.yongyong.domain.post.mapper.PostMapper;
 import com.yapp.yongyong.domain.post.repository.*;
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.infra.uploader.Uploader;
@@ -30,6 +33,7 @@ public class PostService {
     private final PostContainerRepository postContainerRepository;
     private final PostImageRepository postImageRepository;
     private final CommentRepository commentRepository;
+    private final LikePostRepository likePostRepository;
     private final Uploader uploader;
 
     public Post addPost(PostRequestDto postRequestDto, User user) {

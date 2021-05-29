@@ -1,12 +1,12 @@
 package com.yapp.yongyong.domain.post.api;
 
-import com.yapp.yongyong.domain.post.domain.Post;
+import com.yapp.yongyong.domain.post.entity.Post;
 import com.yapp.yongyong.domain.post.dto.CommentEditRequestDto;
 import com.yapp.yongyong.domain.post.dto.CommentRequestDto;
 import com.yapp.yongyong.domain.post.dto.PostRequestDto;
 import com.yapp.yongyong.domain.post.dto.PostResponseDto;
 import com.yapp.yongyong.domain.post.service.PostService;
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.global.domain.CommonApiResponse;
 import com.yapp.yongyong.global.jwt.LoginUser;
 import io.swagger.annotations.ApiOperation;
@@ -81,5 +81,13 @@ public class PostController {
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<CommonApiResponse> getComments(@PathVariable Long postId) {
         return ResponseEntity.ok(new CommonApiResponse(postService.getComments(postId)));
+    }
+
+    @ApiOperation(value = "좋아요")
+    @PutMapping("/{postId}/like")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Void> likeOrUnlikePost(@PathVariable Long postId, @LoginUser User user){
+        postService.likeOrUnLikePost(postId, user);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }

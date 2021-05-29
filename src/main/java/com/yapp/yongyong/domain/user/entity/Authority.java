@@ -1,4 +1,4 @@
-package com.yapp.yongyong.domain.user.domain;
+package com.yapp.yongyong.domain.user.entity;
 
 
 import lombok.*;

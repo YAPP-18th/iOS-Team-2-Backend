@@ -1,6 +1,6 @@
 package com.yapp.yongyong.global.jwt;
 
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

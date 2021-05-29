@@ -1,7 +1,7 @@
 package com.yapp.yongyong.domain.post.repository;
 
-import com.yapp.yongyong.domain.post.domain.Place;
-import com.yapp.yongyong.domain.post.domain.Post;
+import com.yapp.yongyong.domain.post.entity.Place;
+import com.yapp.yongyong.domain.post.entity.Post;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

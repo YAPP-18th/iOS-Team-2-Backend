@@ -1,11 +1,11 @@
 package com.yapp.yongyong.domain.post.mapper;
 
-import com.yapp.yongyong.domain.post.domain.*;
 import com.yapp.yongyong.domain.post.dto.ContainerDto;
 import com.yapp.yongyong.domain.post.dto.PostContainerDto;
 import com.yapp.yongyong.domain.post.dto.PostRequestDto;
 import com.yapp.yongyong.domain.post.dto.PostResponseDto;
-import com.yapp.yongyong.domain.user.domain.User;
+import com.yapp.yongyong.domain.post.entity.*;
+import com.yapp.yongyong.domain.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

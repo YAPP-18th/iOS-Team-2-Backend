@@ -1,8 +1,6 @@
 package com.yapp.yongyong.domain.post.service;
 
-import com.yapp.yongyong.domain.post.domain.ContainerName;
-import com.yapp.yongyong.domain.post.domain.ContainerSize;
-import com.yapp.yongyong.domain.post.domain.Place;
+import com.yapp.yongyong.domain.post.entity.Place;
 import com.yapp.yongyong.domain.post.dto.ContainerDto;
 import com.yapp.yongyong.domain.post.repository.PlaceRepository;
 import com.yapp.yongyong.domain.post.repository.PostRepository;

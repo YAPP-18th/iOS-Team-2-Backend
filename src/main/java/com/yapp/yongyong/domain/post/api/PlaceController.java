@@ -1,7 +1,7 @@
 package com.yapp.yongyong.domain.post.api;
 
-import com.yapp.yongyong.domain.post.domain.ContainerName;
-import com.yapp.yongyong.domain.post.domain.Place;
+import com.yapp.yongyong.domain.post.entity.ContainerName;
+import com.yapp.yongyong.domain.post.entity.Place;
 import com.yapp.yongyong.domain.post.service.PlaceService;
 import com.yapp.yongyong.global.domain.CommonApiResponse;
 import io.swagger.annotations.ApiOperation;
