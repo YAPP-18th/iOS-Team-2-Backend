@@ -1,5 +1,6 @@
 package com.yapp.yongyong.domain.user.service;
 
+import com.yapp.yongyong.domain.post.repository.PostRepository;
 import com.yapp.yongyong.domain.user.entity.Authority;
 import com.yapp.yongyong.domain.user.entity.Role;
 import com.yapp.yongyong.domain.user.entity.TermsOfService;
@@ -38,6 +39,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final TermsOfServiceRepository termsOfServiceRepository;
+    private final PostRepository postRepository;
 
     public void signUp(SignUpDto signUpDto) {
         checkEmailDuplicated(signUpDto.getEmail());
@@ -73,11 +75,13 @@ public class UserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication);
-        return new TokenDto(jwt);
+        User user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail())
+                .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
+        return new TokenDto(jwt, user.getId());
     }
 
-    public TokenDto loginByGuest(){
-        return new TokenDto(tokenProvider.createTokenByGuest());
+    public TokenDto loginByGuest() {
+        return new TokenDto(tokenProvider.createTokenByGuest(), 0L);
     }
 
     public void checkEmailDuplicated(String email) {
@@ -86,8 +90,8 @@ public class UserService {
         }
     }
 
-    public void checkNicknameDuplicated(String nickname){
-        if (userRepository.existsByNickname(nickname)){
+    public void checkNicknameDuplicated(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
             throw new DuplicateRegisterException("이미 가입되어 있는 닉네임입니다.");
         }
     }
@@ -98,9 +102,17 @@ public class UserService {
         }
     }
 
-    public void existUser(String nickname){
-        if(!userRepository.existsByNickname(nickname)){
+    public void existUser(String nickname) {
+        if (!userRepository.existsByNickname(nickname)) {
             throw new NotExistException("존재하지 않는 유저입니다.");
         }
+    }
+
+    public void withdraw(Long userId, User user) {
+        existUser(userId);
+        postRepository.deleteAllByUser(user);
+        termsOfServiceRepository.deleteByUser(user);
+        user.getAuthorities().clear();
+        userRepository.delete(user);
     }
 }
