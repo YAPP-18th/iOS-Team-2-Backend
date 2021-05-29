@@ -8,4 +8,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class TokenDto {
     private String token;
+    private Long userID;
 }
