@@ -1,5 +1,6 @@
 package com.yapp.yongyong.domain.post.api;
 
+import com.yapp.yongyong.domain.post.dto.ReviewCountDto;
 import com.yapp.yongyong.domain.post.entity.ContainerName;
 import com.yapp.yongyong.domain.post.entity.Place;
 import com.yapp.yongyong.domain.post.service.PlaceService;
@@ -22,7 +23,7 @@ public class PlaceController {
 
     @ApiOperation(value = "가게별 자주 쓰이는 용기들 조회")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "success", response = ContainerName.class)
+            @ApiResponse(code = 200, message = "success", response = ContainerName.class, responseContainer = "List")
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('GUEST','USER')")
@@ -32,11 +33,21 @@ public class PlaceController {
 
     @ApiOperation(value = "같은 이름의 가게들 리뷰 수 조회")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "success", response = Place.class)
+            @ApiResponse(code = 200, message = "success", response = Place.class, responseContainer = "List")
     })
     @GetMapping("/review-count")
     @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<CommonApiResponse> getReviewCounts(@RequestParam String name) {
         return ResponseEntity.ok(new CommonApiResponse(placeService.getReviewCountsByName(name)));
+    }
+
+    @ApiOperation(value = "모든 가게들 리뷰 수 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = ReviewCountDto.class, responseContainer = "List")
+    })
+    @GetMapping("/review-count/all")
+    @PreAuthorize("hasAnyRole('GUEST','USER')")
+    public ResponseEntity<CommonApiResponse> getAllReviewCounts() {
+        return ResponseEntity.ok(new CommonApiResponse(placeService.getAllReviewCounts()));
     }
 }

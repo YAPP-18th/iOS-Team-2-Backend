@@ -1,5 +1,6 @@
 package com.yapp.yongyong.domain.post.service;
 
+import com.yapp.yongyong.domain.post.dto.ReviewCountDto;
 import com.yapp.yongyong.domain.post.entity.Place;
 import com.yapp.yongyong.domain.post.dto.ContainerDto;
 import com.yapp.yongyong.domain.post.repository.PlaceRepository;
@@ -22,7 +23,7 @@ public class PlaceService {
         Optional<Place> findPlace = placeRepository.findByNameAndLocation(name, location);
 
         if (findPlace.isEmpty()) {
-            return Arrays.asList();
+            return Collections.emptyList();
         }
 
         List<ContainerDto> collect = postRepository.findAllByPlace(findPlace.get()).stream()
@@ -35,10 +36,16 @@ public class PlaceService {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
-        return collect.subList(0, collect.size() > 3 ? 3 : collect.size());
+        return collect.subList(0, Math.min(collect.size(), 3));
     }
 
     public List<Place> getReviewCountsByName(String name) {
         return placeRepository.findAllByName(name);
+    }
+
+    public List<ReviewCountDto> getAllReviewCounts() {
+        return placeRepository.findAll().stream()
+                .map(place -> new ReviewCountDto(place.getName(), place.getLocation(), place.getReviewCount()))
+                .collect(Collectors.toList());
     }
 }

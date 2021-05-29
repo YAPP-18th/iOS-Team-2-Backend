@@ -73,7 +73,7 @@ public class PostService {
     public List<PostResponseDto> getPostsByPlace(String name, String location) {
         Optional<Place> findPlace = placeRepository.findByNameAndLocation(name, location);
         if (findPlace.isEmpty()) {
-            return Arrays.asList();
+            return Collections.emptyList();
         }
 
         List<Post> findPosts = postRepository.findAllByPlace(findPlace.get());
@@ -115,6 +115,7 @@ public class PostService {
         if (!post.getUser().equals(user)) {
             throw new NotDataEqualsException("본인 게시물만 삭제할 수 있습니다.");
         }
+        post.getPlace().subReviewCount();
         postRepository.delete(post);
     }
 
