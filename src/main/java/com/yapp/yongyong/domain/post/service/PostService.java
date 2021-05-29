@@ -61,6 +61,13 @@ public class PostService {
         );
     }
 
+
+    public List<PostResponseDto> getPosts() {
+        return postRepository.findAll().stream()
+                .map(PostMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
+    }
+
     public List<PostResponseDto> getPostsByPlace(String name, String location) {
         Optional<Place> findPlace = placeRepository.findByNameAndLocation(name, location);
         if (findPlace.isEmpty()) {

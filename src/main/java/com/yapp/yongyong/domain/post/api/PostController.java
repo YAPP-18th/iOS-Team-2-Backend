@@ -33,6 +33,13 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @ApiOperation(value = "전체 게시물 조회하기")
+    @GetMapping
+    @PreAuthorize("hasAnyRole('USER','GUEST')")
+    public ResponseEntity<CommonApiResponse> getPosts(){
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPosts()));
+    }
+
     @ApiOperation(value = "가게별 게시물 전체 조회하기")
     @ApiResponses({
             @ApiResponse(code = 200, message = "success", response = PostResponseDto.class, responseContainer = "List")
