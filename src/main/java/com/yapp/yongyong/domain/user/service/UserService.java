@@ -1,5 +1,8 @@
 package com.yapp.yongyong.domain.user.service;
 
+import com.yapp.yongyong.domain.post.repository.LikePostRepository;
+import com.yapp.yongyong.domain.post.repository.PostRepository;
+import com.yapp.yongyong.domain.user.dto.ProfileEditDto;
 import com.yapp.yongyong.domain.user.entity.Authority;
 import com.yapp.yongyong.domain.user.entity.Role;
 import com.yapp.yongyong.domain.user.entity.TermsOfService;
@@ -10,6 +13,7 @@ import com.yapp.yongyong.domain.user.dto.TokenDto;
 import com.yapp.yongyong.domain.user.error.DuplicateRegisterException;
 import com.yapp.yongyong.domain.user.repository.TermsOfServiceRepository;
 import com.yapp.yongyong.domain.user.repository.UserRepository;
+import com.yapp.yongyong.global.error.BadRequestException;
 import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.global.jwt.TokenProvider;
 import com.yapp.yongyong.infra.uploader.Uploader;
@@ -38,9 +42,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final TermsOfServiceRepository termsOfServiceRepository;
+    private final PostRepository postRepository;
+    private final LikePostRepository likePostRepository;
 
     public void signUp(SignUpDto signUpDto) {
         checkEmailDuplicated(signUpDto.getEmail());
+        checkNicknameDuplicated(signUpDto.getNickname());
 
         Authority authority = new Authority(Role.USER.getName());
 
@@ -72,18 +79,58 @@ public class UserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication);
-        return new TokenDto(jwt);
+        User user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail())
+                .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
+        return new TokenDto(jwt, user.getId());
     }
 
+    public TokenDto loginByGuest() {
+        return new TokenDto(tokenProvider.createTokenByGuest(), 0L);
+    }
+
+    @Transactional(readOnly = true)
     public void checkEmailDuplicated(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new DuplicateRegisterException("이미 가입되어 있는 유저입니다.");
         }
     }
 
+    @Transactional(readOnly = true)
+    public void checkNicknameDuplicated(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            throw new DuplicateRegisterException("이미 가입되어 있는 닉네임입니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
     public void existUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotExistException("존재하지 않는 유저입니다.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public void existUser(String nickname) {
+        if (!userRepository.existsByNickname(nickname)) {
+            throw new NotExistException("존재하지 않는 유저입니다.");
+        }
+    }
+
+    public void withdraw(Long userId, User user) {
+        existUser(userId);
+        postRepository.deleteAllByUser(user);
+        termsOfServiceRepository.deleteByUser(user);
+        likePostRepository.deleteAllByUser(user);
+        user.getAuthorities().clear();
+        userRepository.delete(user);
+    }
+
+    public void editProfile(ProfileEditDto profileDto, User user) {
+        existUser(user.getId());
+        if (!user.getId().equals(profileDto.getId())) {
+            throw new BadRequestException("본인 프로필만 수정할 수 있습니다.");
+        }
+        profileDto.getImage().ifPresent(image -> user.updateImage(uploader.upload(image, PROFILE)));
+        user.updateNameAndIntroduction(profileDto.getNickname(), profileDto.getIntroduction());
     }
 }

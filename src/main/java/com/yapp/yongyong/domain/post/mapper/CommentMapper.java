@@ -10,8 +10,8 @@ import org.mapstruct.factory.Mappers;
 public interface CommentMapper {
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
-    @Mapping(source = "comment.user.nickname",target = "nickname")
-    @Mapping(source = "id",target = "commentId")
+    @Mapping(source = "comment.user.nickname", target = "nickname")
+    @Mapping(source = "id", target = "commentId")
     @Mapping(expression = "java(comment.getCreatedDate().toLocalDate())", target = "createdDate")
     CommentResponseDto toDto(Comment comment);
 }

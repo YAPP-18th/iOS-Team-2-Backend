@@ -1,7 +1,7 @@
 package com.yapp.yongyong.domain.post.entity;
 
 import com.yapp.yongyong.domain.user.entity.User;
-import com.yapp.yongyong.global.domain.BaseTimeEntity;
+import com.yapp.yongyong.global.entity.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;

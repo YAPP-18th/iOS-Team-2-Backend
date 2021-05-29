@@ -1,7 +1,7 @@
 package com.yapp.yongyong.domain.post.entity;
 
 import com.yapp.yongyong.domain.user.entity.User;
-import com.yapp.yongyong.global.domain.BaseTimeEntity;
+import com.yapp.yongyong.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,9 +24,6 @@ public class Post extends BaseTimeEntity {
     @Lob
     private String content;
 
-    @Column(name = "like_count")
-    private Integer likeCount;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -47,16 +44,14 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
     Set<Comment> comments = new HashSet<>();
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    Set<LikePost> likePosts = new HashSet<>();
+
     @Builder
     public Post(String content, User user, Place place, String reviewBadge) {
         this.content = content;
         this.user = user;
         this.place = place;
         this.reviewBadge = reviewBadge;
-    }
-
-    @PrePersist
-    public void checkLikeCount(){
-        this.likeCount = this.likeCount == null ? 0 : this.likeCount;
     }
 }

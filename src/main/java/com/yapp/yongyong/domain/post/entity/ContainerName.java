@@ -21,11 +21,11 @@ public enum ContainerName {
         return name;
     }
 
-    public static String validateNmae(String name){
+    public static String validateNmae(String name) {
         return Arrays.stream(ContainerName.values())
                 .filter(containerName -> containerName.getName().equals(name))
                 .findAny()
-                .orElseThrow(()->new NotExistException("아직 지원하지 않는 용기입니다."))
+                .orElseThrow(() -> new NotExistException("아직 지원하지 않는 용기입니다."))
                 .getName();
     }
 

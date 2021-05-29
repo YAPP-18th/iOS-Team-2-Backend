@@ -17,7 +17,7 @@ public class ErrorResponse {
         this.detail = detail;
     }
 
-    public static ErrorResponse of(final ErrorCode code,final String detail) {
-        return new ErrorResponse(code,detail);
+    public static ErrorResponse of(final ErrorCode code, final String detail) {
+        return new ErrorResponse(code, detail);
     }
 }

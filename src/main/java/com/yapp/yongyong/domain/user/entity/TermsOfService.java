@@ -1,6 +1,6 @@
 package com.yapp.yongyong.domain.user.entity;
 
-import com.yapp.yongyong.global.domain.BaseTimeEntity;
+import com.yapp.yongyong.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name="terms_of_service")
+@Table(name = "terms_of_service")
 @Entity
 public class TermsOfService extends BaseTimeEntity {
     @Id

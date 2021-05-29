@@ -1,6 +1,6 @@
 package com.yapp.yongyong.domain.post.entity;
 
-import com.yapp.yongyong.global.domain.BaseTimeEntity;
+import com.yapp.yongyong.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public class Place extends BaseTimeEntity {
         this.reviewCount = 0;
     }
 
-    public void addReviewCount(){
+    public void addReviewCount() {
         this.reviewCount++;
     }
 }

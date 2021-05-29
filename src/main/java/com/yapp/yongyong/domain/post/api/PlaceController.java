@@ -3,7 +3,7 @@ package com.yapp.yongyong.domain.post.api;
 import com.yapp.yongyong.domain.post.entity.ContainerName;
 import com.yapp.yongyong.domain.post.entity.Place;
 import com.yapp.yongyong.domain.post.service.PlaceService;
-import com.yapp.yongyong.global.domain.CommonApiResponse;
+import com.yapp.yongyong.global.entity.CommonApiResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -27,7 +27,7 @@ public class PlaceController {
     @GetMapping
     @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<CommonApiResponse> getContainers(@RequestParam String name, @RequestParam String place) {
-        return ResponseEntity.ok(new CommonApiResponse(placeService.getBestContainersByPlace(name,place)));
+        return ResponseEntity.ok(new CommonApiResponse(placeService.getBestContainersByPlace(name, place)));
     }
 
     @ApiOperation(value = "같은 이름의 가게들 리뷰 수 조회")

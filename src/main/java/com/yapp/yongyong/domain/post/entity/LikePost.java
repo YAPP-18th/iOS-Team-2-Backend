@@ -2,6 +2,7 @@ package com.yapp.yongyong.domain.post.entity;
 
 import com.yapp.yongyong.domain.user.entity.User;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,9 @@ public class LikePost {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public LikePost(User user, Post post) {
+        this.user = user;
+        this.post = post;
+    }
 }

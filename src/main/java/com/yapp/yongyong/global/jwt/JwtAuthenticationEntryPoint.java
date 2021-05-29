@@ -24,13 +24,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        sendErrorMessage(response, JwtErrorCode.JWT_ERROR,authException.getMessage());
+        sendErrorMessage(response, JwtErrorCode.JWT_ERROR, authException.getMessage());
     }
 
     private void sendErrorMessage(HttpServletResponse res, ErrorCode errorCode, String message) throws IOException {
         res.setStatus(HttpServletResponse.SC_FORBIDDEN);
         res.setContentType(MediaType.APPLICATION_JSON.toString());
         res.getWriter().write(this.objectMapper
-                .writeValueAsString( ErrorResponse.of(errorCode,message)));
+                .writeValueAsString(ErrorResponse.of(errorCode, message)));
     }
 }
