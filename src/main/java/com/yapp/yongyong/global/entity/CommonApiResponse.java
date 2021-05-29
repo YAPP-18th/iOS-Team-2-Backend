@@ -1,4 +1,4 @@
-package com.yapp.yongyong.global.domain;
+package com.yapp.yongyong.global.entity;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
-package com.yapp.yongyong.domain.post.domain;
+package com.yapp.yongyong.domain.post.entity;
 
-import com.yapp.yongyong.global.domain.BaseTimeEntity;
+import com.yapp.yongyong.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

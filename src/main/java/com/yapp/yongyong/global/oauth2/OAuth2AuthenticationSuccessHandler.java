@@ -2,7 +2,7 @@ package com.yapp.yongyong.global.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yapp.yongyong.domain.user.dto.TokenDto;
-import com.yapp.yongyong.global.domain.CommonApiResponse;
+import com.yapp.yongyong.global.entity.CommonApiResponse;
 import com.yapp.yongyong.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
