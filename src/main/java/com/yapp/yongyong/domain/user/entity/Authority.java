@@ -1,6 +1,7 @@
 package com.yapp.yongyong.domain.user.entity;
 
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 @Entity
 public class Authority {
 
+    @ApiModelProperty(hidden = true)
     @Id
     @Column(name = "authority_name", length = 50)
     private String authorityName;

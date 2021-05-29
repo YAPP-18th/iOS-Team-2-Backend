@@ -75,7 +75,9 @@ public class PostController {
     @ApiOperation(value = "게시물 수정하기")
     @PutMapping("/{postId}")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<Void> editPost(@PathVariable Long postId, PostRequestDto postRequestDto, @LoginUser User user) {
+    public ResponseEntity<Void> editPost(@PathVariable Long postId, PostRequestDto postRequestDto,
+                                         @ApiParam(value = "무시")
+                                         @LoginUser User user) {
         postService.editPost(postId, postRequestDto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

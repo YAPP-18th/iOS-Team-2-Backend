@@ -1,5 +1,6 @@
 package com.yapp.yongyong.global.entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,9 +15,11 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTimeEntity {
 
+    @ApiModelProperty(hidden = true)
     @CreatedDate
     private LocalDateTime createdDate;
 
+    @ApiModelProperty(hidden = true)
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
