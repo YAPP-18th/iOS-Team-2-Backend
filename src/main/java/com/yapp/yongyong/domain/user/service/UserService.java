@@ -1,5 +1,6 @@
 package com.yapp.yongyong.domain.user.service;
 
+import com.google.common.collect.Lists;
 import com.yapp.yongyong.domain.post.repository.LikePostRepository;
 import com.yapp.yongyong.domain.post.repository.PostRepository;
 import com.yapp.yongyong.domain.user.dto.*;
@@ -20,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,8 +145,9 @@ public class UserService {
 
     public void sendPasswordEmail(String email) {
         String code = RandomStringUtils.randomNumeric(6);
+
         emailService.sendMail(email, SUBJECT, String.format(MESSAGE, code));
-        PasswordCode passwordCode = passwordCodeRepository.findById(email).orElse(new PasswordCode(email));
+        PasswordCode passwordCode = passwordCodeRepository.findById(email).orElse(new PasswordCode(email,code,LocalDateTime.now()));
         passwordCode.refresh(code, LocalDateTime.now());
         passwordCodeRepository.save(passwordCode);
     }

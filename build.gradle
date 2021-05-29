@@ -42,6 +42,7 @@ dependencies {
     compile ('it.ozimov:embedded-redis:0.7.3') {
         exclude group: "org.slf4j", module: "slf4j-simple"
     }
+    compile'com.amazonaws:aws-java-sdk-ses:1.11.847'
 
 
     runtime 'io.jsonwebtoken:jjwt-impl:0.11.2', 'io.jsonwebtoken:jjwt-jackson:0.11.2'
