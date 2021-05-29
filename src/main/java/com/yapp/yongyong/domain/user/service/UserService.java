@@ -79,13 +79,11 @@ public class UserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication);
-        User user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail())
-                .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
-        return new TokenDto(jwt, user.getId());
+        return new TokenDto(jwt);
     }
 
     public TokenDto loginByGuest() {
-        return new TokenDto(tokenProvider.createTokenByGuest(), 0L);
+        return new TokenDto(tokenProvider.createTokenByGuest());
     }
 
     @Transactional(readOnly = true)
@@ -116,8 +114,8 @@ public class UserService {
         }
     }
 
-    public void withdraw(Long userId, User user) {
-        existUser(userId);
+    public void withdraw(User user) {
+        existUser(user.getId());
         postRepository.deleteAllByUser(user);
         termsOfServiceRepository.deleteByUser(user);
         likePostRepository.deleteAllByUser(user);

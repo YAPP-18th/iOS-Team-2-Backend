@@ -39,4 +39,8 @@ public class Place extends BaseTimeEntity {
     public void addReviewCount() {
         this.reviewCount++;
     }
+
+    public void subReviewCount() {
+        this.reviewCount--;
+    }
 }

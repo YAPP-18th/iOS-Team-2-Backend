@@ -65,8 +65,8 @@ public class UserController {
 
     @ApiOperation(value = "회원탈퇴")
     @DeleteMapping("/withdrawal")
-    public ResponseEntity<Void> withdraw(@RequestParam Long userId, @LoginUser User user) {
-        userService.withdraw(userId, user);
+    public ResponseEntity<Void> withdraw(@LoginUser User user) {
+        userService.withdraw(user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
