@@ -87,6 +87,13 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    public List<PostResponseDto> getPostsAtMyPage(User user, Integer month) {
+        userService.existUser(user.getId());
+        return postRepository.getPostByMonth(user, month).stream()
+                .map(PostMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
+    }
+
     public void editPost(Long postId, PostRequestDto postRequestDto, User user) {
         Post post = existPost(postId);
     }

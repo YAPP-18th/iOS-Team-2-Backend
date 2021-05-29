@@ -8,15 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 
-    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user"})
+    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place"})
     List<Post> findAllByPlace(Place place);
 
-    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user"})
+    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place"})
     List<Post> findAllByUser_Nickname(String nickname);
 
-    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user"})
+    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place"})
     List<Post> findAllByUser_Id(Long userId);
 
     void deleteAllByUser(User user);

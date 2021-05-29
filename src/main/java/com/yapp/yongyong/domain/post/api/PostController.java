@@ -6,9 +6,7 @@ import com.yapp.yongyong.domain.post.service.PostService;
 import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.global.entity.CommonApiResponse;
 import com.yapp.yongyong.global.jwt.LoginUser;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,6 +32,9 @@ public class PostController {
     }
 
     @ApiOperation(value = "전체 게시물 조회하기")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = PostResponseDto.class, responseContainer = "List")
+    })
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','GUEST')")
     public ResponseEntity<CommonApiResponse> getPosts(){
@@ -66,8 +67,8 @@ public class PostController {
     })
     @GetMapping("/user/mine")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<CommonApiResponse> getPostsByName(@LoginUser User user) {
-        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByUser(user.getId())));
+    public ResponseEntity<CommonApiResponse> getPostsByName(@LoginUser User user, @RequestParam(required = false) Integer month) {
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsAtMyPage(user,month)));
     }
 
     @ApiOperation(value = "게시물 수정하기")
