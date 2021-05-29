@@ -24,6 +24,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -132,10 +133,13 @@ public class UserService {
     public void editProfile(ProfileEditDto profileDto, User user) {
         existUser(user.getId());
 
+        Optional<MultipartFile> image = Optional.ofNullable(profileDto.getImage());
+
         if (!user.getId().equals(profileDto.getId())) {
             throw new BadRequestException("본인 프로필만 수정할 수 있습니다.");
         }
-        profileDto.getImage().ifPresent(image -> user.updateImage(uploader.upload(image, PROFILE)));
+
+        image.ifPresent(img -> user.updateImage(uploader.upload(img, PROFILE)));
         user.updateNameAndIntroduction(profileDto.getNickname(), profileDto.getIntroduction());
     }
 

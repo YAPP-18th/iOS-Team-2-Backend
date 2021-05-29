@@ -13,6 +13,6 @@ import java.util.Optional;
 public class ProfileEditDto {
     private Long id;
     private String nickname;
-    private Optional<MultipartFile> image;
+    private MultipartFile image;
     private String introduction;
 }
