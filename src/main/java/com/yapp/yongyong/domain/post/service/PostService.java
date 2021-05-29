@@ -9,6 +9,7 @@ import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.error.NotDataEqualsException;
 import com.yapp.yongyong.global.error.NotExistException;
+import com.yapp.yongyong.global.jwt.SecurityUtil;
 import com.yapp.yongyong.infra.uploader.Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
     private static final String POST = "post";
+    private static final String GUEST = "손님";
 
     private final UserService userService;
     private final PostRepository postRepository;
@@ -31,6 +33,7 @@ public class PostService {
     private final PostContainerRepository postContainerRepository;
     private final PostImageRepository postImageRepository;
     private final CommentRepository commentRepository;
+    private final LikePostRepository likePostRepository;
     private final Uploader uploader;
 
     public Post addPost(PostRequestDto postRequestDto, User user) {
@@ -63,9 +66,8 @@ public class PostService {
 
 
     public List<PostResponseDto> getPosts() {
-        return postRepository.findAll().stream()
-                .map(PostMapper.INSTANCE::toDto)
-                .collect(Collectors.toList());
+        List<Post> findPosts = postRepository.findAll();
+        return getPostResponseDtos(findPosts);
     }
 
     public List<PostResponseDto> getPostsByPlace(String name, String location) {
@@ -74,23 +76,33 @@ public class PostService {
             return Arrays.asList();
         }
 
-        return postRepository.findAllByPlace(findPlace.get()).stream()
-                .map(PostMapper.INSTANCE::toDto)
+        List<Post> findPosts = postRepository.findAllByPlace(findPlace.get());
+        return getPostResponseDtos(findPosts);
+    }
+
+    private List<PostResponseDto> getPostResponseDtos(List<Post> findPosts) {
+        String email = SecurityUtil.getCurrentUsername().orElse(GUEST);
+
+        if (email.equals(GUEST)) {
+            return findPosts.stream()
+                    .map(PostMapper.INSTANCE::toDtoForGuest)
+                    .collect(Collectors.toList());
+        }
+        return findPosts.stream()
+                .map(post -> PostMapper.INSTANCE.toDto(post, email))
                 .collect(Collectors.toList());
     }
 
     public List<PostResponseDto> getPostsByUser(Long userId) {
         userService.existUser(userId);
-
-        return postRepository.findAllByUser_Id(userId).stream()
-                .map(PostMapper.INSTANCE::toDto)
-                .collect(Collectors.toList());
+        List<Post> findPosts = postRepository.findAllByUser_Id(userId);
+        return getPostResponseDtos(findPosts);
     }
 
     public List<PostResponseDto> getPostsAtMyPage(User user, Integer month) {
         userService.existUser(user.getId());
         return postRepository.getPostByMonth(user, month).stream()
-                .map(PostMapper.INSTANCE::toDto)
+                .map(post -> PostMapper.INSTANCE.toDto(post, user.getEmail()))
                 .collect(Collectors.toList());
     }
 
@@ -147,5 +159,14 @@ public class PostService {
     private Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotExistException("존재 하지 않는 댓글입니다."));
+    }
+
+    public void likeOrUnLikePost(Long postId, User user) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NotExistException("존재 하지 않는 게시물입니다."));
+        if (likePostRepository.existsByUserAndPost(user, post)) {
+            likePostRepository.deleteByUserAndPost(user, post);
+            return;
+        }
+        likePostRepository.save(new LikePost(user, post));
     }
 }

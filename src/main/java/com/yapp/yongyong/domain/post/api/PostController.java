@@ -48,6 +48,7 @@ public class PostController {
     @GetMapping("/place")
     @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<CommonApiResponse> getPostsByPlace(@RequestParam String name, @RequestParam String location) {
+        log.info("location {}",location);
         return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByPlace(name, location)));
     }
 
@@ -87,7 +88,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @ApiOperation(value = "댓글 생성하기")
+    @ApiOperation(value = "댓글 올리기")
     @PostMapping("/{postId}/comment")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Void> addComment(@PathVariable Long postId,
@@ -124,5 +125,13 @@ public class PostController {
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<CommonApiResponse> getComments(@PathVariable Long postId) {
         return ResponseEntity.ok(new CommonApiResponse(postService.getComments(postId)));
+    }
+
+    @ApiOperation(value = "좋아요")
+    @PutMapping("/{postId}/like")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Void> likeOrUnlikePost(@PathVariable Long postId, @LoginUser User user){
+        postService.likeOrUnLikePost(postId, user);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }

@@ -10,13 +10,13 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 
-    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place"})
+    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place", "likePosts"})
     List<Post> findAllByPlace(Place place);
 
-    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place"})
+    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place", "likePosts"})
     List<Post> findAllByUser_Nickname(String nickname);
 
-    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place"})
+    @EntityGraph(attributePaths = {"postContainers", "postImages", "comments", "user", "place", "likePosts"})
     List<Post> findAllByUser_Id(Long userId);
 
     void deleteAllByUser(User user);

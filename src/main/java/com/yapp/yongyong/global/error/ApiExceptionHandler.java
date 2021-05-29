@@ -1,5 +1,6 @@
 package com.yapp.yongyong.global.error;
 
+import com.yapp.yongyong.domain.user.error.UserNotExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,4 +45,10 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserNotExistException.class)
+    protected ResponseEntity<ErrorResponse> handleUserNotExistException(UserNotExistException e) {
+        log.error("UserNotExistException", e);
+        final ErrorResponse response = ErrorResponse.of(e.getErrorCode(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }
