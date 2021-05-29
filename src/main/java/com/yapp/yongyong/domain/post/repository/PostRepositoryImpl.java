@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.yapp.yongyong.domain.post.entity.QComment.comment;
+import static com.yapp.yongyong.domain.post.entity.QLikePost.likePost;
 import static com.yapp.yongyong.domain.post.entity.QPlace.place;
 import static com.yapp.yongyong.domain.post.entity.QPost.post;
 import static com.yapp.yongyong.domain.post.entity.QPostContainer.postContainer;
@@ -30,6 +31,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchJoin()
                 .leftJoin(post.place, place)
                 .fetchJoin()
+                .leftJoin(post.likePosts, likePost)
                 .where(monthEq(month), post.user.eq(user))
                 .distinct()
                 .fetch();

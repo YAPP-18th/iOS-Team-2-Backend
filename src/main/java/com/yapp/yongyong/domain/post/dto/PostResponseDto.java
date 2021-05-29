@@ -18,4 +18,5 @@ public class PostResponseDto {
     private Integer commentCount;
     private String placeName;
     private String placeLocation;
+    private Boolean isLikePressed;
 }
