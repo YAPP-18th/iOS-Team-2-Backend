@@ -1,9 +1,7 @@
 package com.yapp.yongyong.domain.user.api;
 
 
-import com.yapp.yongyong.domain.user.dto.LoginDto;
-import com.yapp.yongyong.domain.user.dto.SignUpDto;
-import com.yapp.yongyong.domain.user.dto.TokenDto;
+import com.yapp.yongyong.domain.user.dto.*;
 import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.entity.CommonApiResponse;
@@ -70,5 +68,12 @@ public class UserController {
     public ResponseEntity<Void> withdraw(@RequestParam Long userId, @LoginUser User user) {
         userService.withdraw(userId, user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @ApiOperation(value = "프로필 편집")
+    @PutMapping("/profile")
+    public ResponseEntity<Void> editProfile(ProfileEditDto profileDto, @LoginUser User user){
+        userService.editProfile(profileDto, user);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
