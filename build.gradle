@@ -30,6 +30,8 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     compile 'org.springframework.boot:spring-boot-starter-oauth2-client'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
@@ -37,6 +39,10 @@ dependencies {
     compile 'io.springfox:springfox-swagger-ui:2.9.2'
     compileOnly 'org.projectlombok:lombok'
     compile 'io.jsonwebtoken:jjwt-api:0.11.2'
+    compile ('it.ozimov:embedded-redis:0.7.3') {
+        exclude group: "org.slf4j", module: "slf4j-simple"
+    }
+
 
     runtime 'io.jsonwebtoken:jjwt-impl:0.11.2', 'io.jsonwebtoken:jjwt-jackson:0.11.2'
     runtimeOnly 'com.h2database:h2'

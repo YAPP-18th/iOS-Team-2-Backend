@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class Email {
+public class EmailService {
     private final JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")

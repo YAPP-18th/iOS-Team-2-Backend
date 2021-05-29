@@ -27,13 +27,16 @@ spring:
     port: 587
     username: test
     password: test
-
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         format_sql: true
+  redis:
+    host: localhost
+    port: 6379
+
 
 jwt:
   header: Authorization

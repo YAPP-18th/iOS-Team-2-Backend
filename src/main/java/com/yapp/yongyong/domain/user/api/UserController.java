@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -72,8 +73,22 @@ public class UserController {
 
     @ApiOperation(value = "프로필 편집")
     @PutMapping("/profile")
+    @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Void> editProfile(ProfileEditDto profileDto, @LoginUser User user){
         userService.editProfile(profileDto, user);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "비밀번호 찾기 이메일 발송")
+    @GetMapping("/password/email")
+    public ResponseEntity<Void> sendPasswordEmail(@RequestParam String email){
+        userService.sendPasswordEmail(email);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "비밀번호 인증번호 매치")
+    @PostMapping("/password/email")
+    public ResponseEntity<CommonApiResponse> matchPasswordCode(@RequestBody PasswordCodeDto passwordCodeDto){
+       return ResponseEntity.ok(new CommonApiResponse(userService.matchPasswordCode(passwordCodeDto)));
     }
 }

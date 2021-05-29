@@ -2,31 +2,32 @@ package com.yapp.yongyong.domain.user.service;
 
 import com.yapp.yongyong.domain.post.repository.LikePostRepository;
 import com.yapp.yongyong.domain.post.repository.PostRepository;
-import com.yapp.yongyong.domain.user.dto.ProfileEditDto;
-import com.yapp.yongyong.domain.user.entity.Authority;
-import com.yapp.yongyong.domain.user.entity.Role;
-import com.yapp.yongyong.domain.user.entity.TermsOfService;
-import com.yapp.yongyong.domain.user.entity.User;
-import com.yapp.yongyong.domain.user.dto.LoginDto;
-import com.yapp.yongyong.domain.user.dto.SignUpDto;
-import com.yapp.yongyong.domain.user.dto.TokenDto;
+import com.yapp.yongyong.domain.user.dto.*;
+import com.yapp.yongyong.domain.user.entity.*;
 import com.yapp.yongyong.domain.user.error.DuplicateRegisterException;
+import com.yapp.yongyong.domain.user.repository.PasswordCodeRepository;
 import com.yapp.yongyong.domain.user.repository.TermsOfServiceRepository;
 import com.yapp.yongyong.domain.user.repository.UserRepository;
+import com.yapp.yongyong.global.entity.BooleanResponse;
 import com.yapp.yongyong.global.error.BadRequestException;
 import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.global.jwt.TokenProvider;
+import com.yapp.yongyong.infra.email.EmailService;
 import com.yapp.yongyong.infra.uploader.Uploader;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -34,16 +35,21 @@ import java.util.Collections;
 public class UserService {
     private static final String PROFILE = "profile";
     private static final String GENERAL = "GENERAL";
+    private static final String SUBJECT = "[용기내용] 비밀번호 변경 인증번호";
+    private static final String MESSAGE = "인증번호 [%s]를 입력해주세요.";
+
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
     private final Uploader uploader;
+    private final EmailService emailService;
 
     private final UserRepository userRepository;
     private final TermsOfServiceRepository termsOfServiceRepository;
     private final PostRepository postRepository;
     private final LikePostRepository likePostRepository;
+    private final PasswordCodeRepository passwordCodeRepository;
 
     public void signUp(SignUpDto signUpDto) {
         checkEmailDuplicated(signUpDto.getEmail());
@@ -125,10 +131,29 @@ public class UserService {
 
     public void editProfile(ProfileEditDto profileDto, User user) {
         existUser(user.getId());
+
         if (!user.getId().equals(profileDto.getId())) {
             throw new BadRequestException("본인 프로필만 수정할 수 있습니다.");
         }
         profileDto.getImage().ifPresent(image -> user.updateImage(uploader.upload(image, PROFILE)));
         user.updateNameAndIntroduction(profileDto.getNickname(), profileDto.getIntroduction());
+    }
+
+    public void sendPasswordEmail(String email) {
+        String code = RandomStringUtils.randomNumeric(6);
+        emailService.sendMail(email, SUBJECT, String.format(MESSAGE, code));
+        PasswordCode passwordCode = passwordCodeRepository.findById(email).orElse(new PasswordCode(email));
+        passwordCode.refresh(code, LocalDateTime.now());
+        passwordCodeRepository.save(passwordCode);
+    }
+
+    public BooleanResponse matchPasswordCode(PasswordCodeDto passwordCodeDto) {
+        PasswordCode passwordCode = passwordCodeRepository.findById(passwordCodeDto.getEmail())
+                .orElseThrow(() -> new NotExistException("인증 번호를 보낸 적 없는 이메일입니다."));
+        System.out.println("code " + passwordCode.getCode());
+        if (passwordCode.getCode().equals(passwordCodeDto.getCode())) {
+            return new BooleanResponse(true);
+        }
+        return new BooleanResponse(false);
     }
 }
