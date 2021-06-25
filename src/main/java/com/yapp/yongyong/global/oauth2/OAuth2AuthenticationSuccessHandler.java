@@ -22,7 +22,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        String token = tokenProvider.createToken(authentication);
-        response.getWriter().write(this.objectMapper.writeValueAsString(new CommonApiResponse<>(new TokenDto(token))));
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
+        response.getWriter().write(this.objectMapper.writeValueAsString(new CommonApiResponse<>(new TokenDto(accessToken,refreshToken))));
     }
 }

@@ -3,8 +3,10 @@ package com.yapp.yongyong.domain.user.api;
 
 import com.yapp.yongyong.domain.user.dto.*;
 import com.yapp.yongyong.domain.user.entity.User;
+import com.yapp.yongyong.domain.user.mapper.UserMapper;
 import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.entity.CommonApiResponse;
+import com.yapp.yongyong.global.jwt.JwtFilter;
 import com.yapp.yongyong.global.jwt.LoginUser;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Slf4j
@@ -24,6 +27,7 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private static final String AUTHORIZATION = "Authorization";
 
     @ApiOperation(value = "회원가입")
     @PostMapping("/sign-up")
@@ -50,6 +54,16 @@ public class UserController {
         return ResponseEntity.ok(new CommonApiResponse<>(userService.loginByGuest()));
     }
 
+    @ApiOperation(value = "엑세스 토큰 발급")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = TokenDto.class)
+    })
+    @PostMapping("/token/{userId}")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<CommonApiResponse> getAccessToken(@PathVariable Long userId, @RequestHeader(AUTHORIZATION) String jwt) {
+        return ResponseEntity.ok(new CommonApiResponse<>(userService.getAccessToken(userId, jwt.substring(7))));
+    }
+
     @ApiOperation(value = "이메일 중복 체크")
     @GetMapping("/check/email")
     public ResponseEntity<Void> checkEmailDuplicated(@RequestParam String email) {
@@ -74,21 +88,28 @@ public class UserController {
     @ApiOperation(value = "프로필 편집")
     @PutMapping("/profile")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<Void> editProfile(ProfileEditDto profileDto, @LoginUser User user){
+    public ResponseEntity<Void> editProfile(ProfileEditDto profileDto, @LoginUser User user) {
         userService.editProfile(profileDto, user);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @ApiOperation(value = "프로필 조회")
+    @GetMapping("/profile")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<CommonApiResponse> getProfile(@LoginUser User user) {
+        return ResponseEntity.ok(new CommonApiResponse(UserMapper.INSTANCE.toDto(user)));
+    }
+
     @ApiOperation(value = "비밀번호 찾기 이메일 발송")
     @GetMapping("/password/email")
-    public ResponseEntity<Void> sendPasswordEmail(@RequestParam String email){
+    public ResponseEntity<Void> sendPasswordEmail(@RequestParam String email) {
         userService.sendPasswordEmail(email);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ApiOperation(value = "비밀번호 인증번호 매치")
     @PostMapping("/password/email")
-    public ResponseEntity<CommonApiResponse> matchPasswordCode(@RequestBody PasswordCodeDto passwordCodeDto){
-       return ResponseEntity.ok(new CommonApiResponse(userService.matchPasswordCode(passwordCodeDto)));
+    public ResponseEntity<CommonApiResponse> matchPasswordCode(@RequestBody PasswordCodeDto passwordCodeDto) {
+        return ResponseEntity.ok(new CommonApiResponse(userService.matchPasswordCode(passwordCodeDto)));
     }
 }

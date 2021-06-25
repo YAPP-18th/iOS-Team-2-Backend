@@ -26,14 +26,17 @@ public class TokenProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "auth";
 
-    private final long tokenValidityInMilliseconds;
+    private final long accessTokenMilliSeconds;
+    private final long refreshTokenMilliSeconds;
     private final String secret;
 
     private Key key;
 
-    public TokenProvider(@Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
+    public TokenProvider(@Value("${jwt.access-token}") long accessToken,
+                         @Value("${jwt.refresh-token}") long refreshToken,
                          @Value("${jwt.secret}") String secret) {
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.accessTokenMilliSeconds = accessToken * 1000;
+        this.refreshTokenMilliSeconds = refreshToken * 1000;
         this.secret = secret;
     }
 
@@ -43,13 +46,13 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(Authentication authentication) {
+    private String createToken(Authentication authentication, long milliSeconds) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
+        Date validity = new Date(now + milliSeconds);
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
@@ -59,11 +62,19 @@ public class TokenProvider implements InitializingBean {
                 .compact();
     }
 
+    public String createAccessToken(Authentication authentication) {
+        return createToken(authentication, this.accessTokenMilliSeconds);
+    }
+
+    public String createRefreshToken(Authentication authentication) {
+        return createToken(authentication, this.refreshTokenMilliSeconds);
+    }
+
     public String createTokenByGuest() {
         String authorities = Role.GUEST.getName();
 
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
+        Date validity = new Date(now + this.accessTokenMilliSeconds);
 
         return Jwts.builder()
                 .setSubject(Role.GUEST.getDescription())

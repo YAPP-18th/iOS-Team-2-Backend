@@ -41,7 +41,8 @@ spring:
 jwt:
   header: Authorization
   secret: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
-  token-validity-in-seconds: 86400
+  access-token: 3600
+  refresh-token: 1209600
 
 cloud:
   aws:

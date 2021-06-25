@@ -1,12 +1,12 @@
 package com.yapp.yongyong.domain.user.service;
 
-import com.google.common.collect.Lists;
 import com.yapp.yongyong.domain.post.repository.LikePostRepository;
 import com.yapp.yongyong.domain.post.repository.PostRepository;
 import com.yapp.yongyong.domain.user.dto.*;
 import com.yapp.yongyong.domain.user.entity.*;
 import com.yapp.yongyong.domain.user.error.DuplicateRegisterException;
 import com.yapp.yongyong.domain.user.repository.PasswordCodeRepository;
+import com.yapp.yongyong.domain.user.repository.RefreshTokenRepository;
 import com.yapp.yongyong.domain.user.repository.TermsOfServiceRepository;
 import com.yapp.yongyong.domain.user.repository.UserRepository;
 import com.yapp.yongyong.global.entity.BooleanResponse;
@@ -38,6 +38,7 @@ public class UserService {
     private static final String GENERAL = "GENERAL";
     private static final String SUBJECT = "[용기내용] 비밀번호 변경 인증번호";
     private static final String MESSAGE = "인증번호 [%s]를 입력해주세요.";
+    private static final String EMPTY = "";
 
 
     private final TokenProvider tokenProvider;
@@ -51,6 +52,7 @@ public class UserService {
     private final PostRepository postRepository;
     private final LikePostRepository likePostRepository;
     private final PasswordCodeRepository passwordCodeRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public void signUp(SignUpDto signUpDto) {
         checkEmailDuplicated(signUpDto.getEmail());
@@ -85,12 +87,27 @@ public class UserService {
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.createToken(authentication);
-        return new TokenDto(jwt);
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
+
+        User user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail())
+                .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
+
+        refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
+        return new TokenDto(accessToken, refreshToken);
     }
 
     public TokenDto loginByGuest() {
-        return new TokenDto(tokenProvider.createTokenByGuest());
+        return new TokenDto(tokenProvider.createTokenByGuest(), EMPTY);
+    }
+
+    public TokenDto getAccessToken(Long userId, String refreshToken) {
+        RefreshToken findRefreshToken = refreshTokenRepository.findById(userId)
+                .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
+        tokenProvider.validateToken(findRefreshToken.getToken());
+        Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        return new TokenDto(accessToken, findRefreshToken.getToken());
     }
 
     @Transactional(readOnly = true)
@@ -147,7 +164,7 @@ public class UserService {
         String code = RandomStringUtils.randomNumeric(6);
 
         emailService.sendMail(email, SUBJECT, String.format(MESSAGE, code));
-        PasswordCode passwordCode = passwordCodeRepository.findById(email).orElse(new PasswordCode(email,code,LocalDateTime.now()));
+        PasswordCode passwordCode = passwordCodeRepository.findById(email).orElse(new PasswordCode(email, code, LocalDateTime.now()));
         passwordCode.refresh(code, LocalDateTime.now());
         passwordCodeRepository.save(passwordCode);
     }
@@ -155,7 +172,6 @@ public class UserService {
     public BooleanResponse matchPasswordCode(PasswordCodeDto passwordCodeDto) {
         PasswordCode passwordCode = passwordCodeRepository.findById(passwordCodeDto.getEmail())
                 .orElseThrow(() -> new NotExistException("인증 번호를 보낸 적 없는 이메일입니다."));
-        System.out.println("code " + passwordCode.getCode());
         if (passwordCode.getCode().equals(passwordCodeDto.getCode())) {
             return new BooleanResponse(true);
         }

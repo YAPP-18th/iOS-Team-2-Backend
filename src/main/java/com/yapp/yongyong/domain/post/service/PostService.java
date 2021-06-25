@@ -36,7 +36,7 @@ public class PostService {
     private final LikePostRepository likePostRepository;
     private final Uploader uploader;
 
-    public Post addPost(PostRequestDto postRequestDto, User user) {
+    public void addPost(PostRequestDto postRequestDto, User user) {
         Place findPlace = placeRepository.findByNameAndLocation(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation()).orElseGet(
                 () -> {
                     Place newPlace = new Place(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation());
@@ -46,7 +46,6 @@ public class PostService {
         Post savePost = postRepository.save(PostMapper.INSTANCE.toEntity(postRequestDto, findPlace, user));
         addPostImages(postRequestDto, savePost);
         addPostContainers(postRequestDto, savePost);
-        return savePost;
     }
 
     private void addPostContainers(PostRequestDto postRequestDto, Post savePost) {

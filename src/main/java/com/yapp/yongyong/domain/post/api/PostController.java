@@ -27,7 +27,7 @@ public class PostController {
     @PostMapping
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Void> addPost(PostRequestDto postRequestDto, @LoginUser User user) {
-        Post post = postService.addPost(postRequestDto, user);
+        postService.addPost(postRequestDto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
