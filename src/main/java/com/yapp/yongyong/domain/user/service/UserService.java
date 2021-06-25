@@ -15,6 +15,7 @@ import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.global.jwt.TokenProvider;
 import com.yapp.yongyong.infra.email.EmailService;
 import com.yapp.yongyong.infra.uploader.Uploader;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -105,6 +106,11 @@ public class UserService {
         RefreshToken findRefreshToken = refreshTokenRepository.findById(userId)
                 .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
         tokenProvider.validateToken(findRefreshToken.getToken());
+
+        if (!refreshToken.equals(findRefreshToken.getToken())) {
+            throw new UnsupportedJwtException("옳바르지 않은 리프레쉬 토큰입니다.");
+        }
+
         Authentication authentication = tokenProvider.getAuthentication(refreshToken);
         String accessToken = tokenProvider.createAccessToken(authentication);
         return new TokenDto(accessToken, findRefreshToken.getToken());
