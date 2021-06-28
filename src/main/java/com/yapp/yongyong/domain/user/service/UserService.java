@@ -175,12 +175,21 @@ public class UserService {
         passwordCodeRepository.save(passwordCode);
     }
 
-    public BooleanResponse matchPasswordCode(PasswordCodeDto passwordCodeDto) {
+    public Boolean matchPasswordCode(PasswordCodeDto passwordCodeDto) {
         PasswordCode passwordCode = passwordCodeRepository.findById(passwordCodeDto.getEmail())
                 .orElseThrow(() -> new NotExistException("인증 번호를 보낸 적 없는 이메일입니다."));
         if (passwordCode.getCode().equals(passwordCodeDto.getCode())) {
-            return new BooleanResponse(true);
+            return true;
         }
-        return new BooleanResponse(false);
+        return false;
+    }
+
+    public void resetPassword(NewPasswordDto newPasswordDto) {
+        PasswordCodeDto passwordCodeDto = new PasswordCodeDto(newPasswordDto.getEmail(), newPasswordDto.getCode());
+        if (matchPasswordCode(passwordCodeDto)) {
+            User user = userRepository.findOneWithAuthoritiesByEmail(passwordCodeDto.getEmail())
+                    .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
+            user.updatePassword(passwordEncoder.encode(newPasswordDto.getPassword()));
+        }
     }
 }

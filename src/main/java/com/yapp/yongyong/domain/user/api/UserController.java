@@ -5,6 +5,7 @@ import com.yapp.yongyong.domain.user.dto.*;
 import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.mapper.UserMapper;
 import com.yapp.yongyong.domain.user.service.UserService;
+import com.yapp.yongyong.global.entity.BooleanResponse;
 import com.yapp.yongyong.global.entity.CommonApiResponse;
 import com.yapp.yongyong.global.jwt.JwtFilter;
 import com.yapp.yongyong.global.jwt.LoginUser;
@@ -110,6 +111,13 @@ public class UserController {
     @ApiOperation(value = "비밀번호 인증번호 매치")
     @PostMapping("/password/email")
     public ResponseEntity<CommonApiResponse> matchPasswordCode(@RequestBody PasswordCodeDto passwordCodeDto) {
-        return ResponseEntity.ok(new CommonApiResponse(userService.matchPasswordCode(passwordCodeDto)));
+        return ResponseEntity.ok(new CommonApiResponse(new BooleanResponse(userService.matchPasswordCode(passwordCodeDto))));
+    }
+
+    @ApiOperation(value = "비밀번호 재설정")
+    @PutMapping("/password")
+    public ResponseEntity<Void> resetPassword(@RequestBody NewPasswordDto newPasswordDto) {
+        userService.resetPassword(newPasswordDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
