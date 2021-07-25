@@ -14,9 +14,12 @@ public class PostResponseDto {
     private List<String> images;
     private List<PostContainerDto> postContainers;
     private LocalDate createdDate;
+    private String content;
     private String reviewBadge;
     private Integer commentCount;
     private String placeName;
     private String placeLocation;
+    private String placeLongitude;
+    private String placeLatitude;
     private Boolean isLikePressed;
 }

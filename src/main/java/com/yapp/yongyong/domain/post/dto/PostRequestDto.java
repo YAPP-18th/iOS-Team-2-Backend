@@ -14,4 +14,6 @@ public class PostRequestDto {
     private String reviewBadge;
     private String placeName;
     private String placeLocation;
+    private String placeLatitude;
+    private String placeLongitude;
 }

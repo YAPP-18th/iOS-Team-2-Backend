@@ -26,13 +26,22 @@ public class Place extends BaseTimeEntity {
     @Lob
     private String location;
 
+    @Column(name = "latitude")
+    private String latitude;
+
+    @Column(name = "longitude")
+    private String longitude;
+
+
     @Column(name = "review_count")
     private Integer reviewCount;
 
     @Builder
-    public Place(String name, String location) {
+    public Place(String name, String location, String latitude, String longitude) {
         this.name = name;
         this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.reviewCount = 0;
     }
 

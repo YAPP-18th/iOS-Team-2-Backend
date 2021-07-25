@@ -21,10 +21,13 @@ public interface PostMapper {
     PostMapper INSTANCE = Mappers.getMapper(PostMapper.class);
 
     @Mapping(source = "id", target = "postId")
-    @Mapping(expression = "java(post.getPostImages().stream().sorted(Comparator.comparing(PostImage::getId)).map(PostImage::getImageUrl).collect(Collectors.toList()))", target = "images")
     @Mapping(source = "post.postContainers", target = "postContainers")
     @Mapping(source = "post.place.name", target = "placeName")
     @Mapping(source = "post.place.location", target = "placeLocation")
+    @Mapping(source = "post.place.latitude", target = "placeLatitude")
+    @Mapping(source = "post.place.longitude", target = "placeLongitude")
+    @Mapping(source = "post.content", target = "content")
+    @Mapping(expression = "java(post.getPostImages().stream().sorted(Comparator.comparing(PostImage::getId)).map(PostImage::getImageUrl).collect(Collectors.toList()))", target = "images")
     @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
     @Mapping(expression = "java(post.getComments().size())", target = "commentCount")
     @Mapping(expression = "java(post.getLikePosts().size())", target = "likeCount")
@@ -32,10 +35,13 @@ public interface PostMapper {
     PostResponseDto toDtoForGuest(Post post);
 
     @Mapping(source = "post.id", target = "postId")
-    @Mapping(expression = "java(post.getPostImages().stream().sorted(Comparator.comparing(PostImage::getId)).map(PostImage::getImageUrl).collect(Collectors.toList()))", target = "images")
     @Mapping(source = "post.postContainers", target = "postContainers")
     @Mapping(source = "post.place.name", target = "placeName")
     @Mapping(source = "post.place.location", target = "placeLocation")
+    @Mapping(source = "post.place.latitude", target = "placeLatitude")
+    @Mapping(source = "post.place.longitude", target = "placeLongitude")
+    @Mapping(source = "post.content", target = "content")
+    @Mapping(expression = "java(post.getPostImages().stream().sorted(Comparator.comparing(PostImage::getId)).map(PostImage::getImageUrl).collect(Collectors.toList()))", target = "images")
     @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
     @Mapping(expression = "java(post.getComments().size())", target = "commentCount")
     @Mapping(expression = "java(post.getLikePosts().size())", target = "likeCount")

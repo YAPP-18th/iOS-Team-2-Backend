@@ -39,7 +39,12 @@ public class PostService {
     public void addPost(PostRequestDto postRequestDto, User user) {
         Place findPlace = placeRepository.findByNameAndLocation(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation()).orElseGet(
                 () -> {
-                    Place newPlace = new Place(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation());
+                    Place newPlace = Place.builder()
+                            .name(postRequestDto.getPlaceName())
+                            .location(postRequestDto.getPlaceLocation())
+                            .longitude(postRequestDto.getPlaceLongitude())
+                            .latitude(postRequestDto.getPlaceLatitude())
+                            .build();
                     return placeRepository.save(newPlace);
                 });
         findPlace.addReviewCount();
