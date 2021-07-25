@@ -9,7 +9,6 @@ import com.yapp.yongyong.domain.user.repository.PasswordCodeRepository;
 import com.yapp.yongyong.domain.user.repository.RefreshTokenRepository;
 import com.yapp.yongyong.domain.user.repository.TermsOfServiceRepository;
 import com.yapp.yongyong.domain.user.repository.UserRepository;
-import com.yapp.yongyong.global.entity.BooleanResponse;
 import com.yapp.yongyong.global.error.BadRequestException;
 import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.global.jwt.TokenProvider;
@@ -178,10 +177,7 @@ public class UserService {
     public Boolean matchPasswordCode(PasswordCodeDto passwordCodeDto) {
         PasswordCode passwordCode = passwordCodeRepository.findById(passwordCodeDto.getEmail())
                 .orElseThrow(() -> new NotExistException("인증 번호를 보낸 적 없는 이메일입니다."));
-        if (passwordCode.getCode().equals(passwordCodeDto.getCode())) {
-            return true;
-        }
-        return false;
+        return passwordCode.getCode().equals(passwordCodeDto.getCode());
     }
 
     public void resetPassword(NewPasswordDto newPasswordDto) {
