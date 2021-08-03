@@ -25,6 +25,9 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(name = "social_id")
+    private String socialId;
+
     @ApiModelProperty(hidden = true)
     @Column(nullable = false, unique = true)
     private String email;
@@ -59,7 +62,8 @@ public class User extends BaseTimeEntity {
     private String provider;
 
     @Builder
-    public User(String email, String password, Set<Authority> authorities, String nickname, String imageUrl, String introduction, String provider) {
+    public User(String socialId, String email, String password, Set<Authority> authorities, String nickname, String imageUrl, String introduction, String provider) {
+        this.socialId = socialId;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
@@ -76,23 +80,23 @@ public class User extends BaseTimeEntity {
         return this;
     }
 
-    public void updateImage(String imageUrl){
+    public void updateImage(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
-    public void updatePassword(String password){
+    public void updatePassword(String password) {
         this.password = password;
     }
 
-    public void updateNameAndIntroduction(String nickname, String introduction){
+    public void updateNameAndIntroduction(String nickname, String introduction) {
         this.nickname = nickname;
         this.introduction = introduction;
     }
 
     public String getUserRoleKey() {
         return authorities.stream()
-                .filter(authority -> authority.getAuthorityName().equals(Role.USER.getName()))
                 .map(Authority::getAuthorityName)
+                .filter(name-> name.equals(Role.USER.getName()))
                 .findAny()
                 .orElseThrow(() -> new NotExistException("유저 권한이 존재하지 않습니다."));
     }

@@ -36,6 +36,7 @@ import java.util.Optional;
 public class UserService {
     private static final String PROFILE = "profile";
     private static final String GENERAL = "GENERAL";
+    private static final String APPLE = "APPLE";
     private static final String SUBJECT = "[용기내용] 비밀번호 변경 인증번호";
     private static final String MESSAGE = "인증번호 [%s]를 입력해주세요.";
     private static final String EMPTY = "";
@@ -79,6 +80,55 @@ public class UserService {
                 .user(savedUser)
                 .build();
         termsOfServiceRepository.save(terms);
+    }
+
+    /*
+     서비스 커지면 ssl + oauth로 변경 예정
+     */
+    public TokenDto signUpByApple(AppleSignUpDto signUpDto) {
+
+        if (userRepository.existsBySocialId(signUpDto.getSocialId())) {
+            return loginByApple(new LoginDto(signUpDto.getEmail(), signUpDto.getSocialId()));
+        }
+
+        Authority authority = new Authority(Role.USER.getName());
+
+        User user = User.builder()
+                .socialId(signUpDto.getSocialId())
+                .email(signUpDto.getEmail())
+                .password(passwordEncoder.encode(signUpDto.getSocialId()))
+                .authorities(Collections.singleton(authority))
+                .nickname(signUpDto.getNickname())
+                .provider(APPLE)
+                .build();
+        User savedUser = userRepository.save(user);
+
+        TermsOfService terms = TermsOfService.builder()
+                .location(signUpDto.isLocation())
+                .service(signUpDto.isService())
+                .privacy(signUpDto.isPrivacy())
+                .marketing(signUpDto.isMarketing())
+                .user(savedUser)
+                .build();
+
+        termsOfServiceRepository.save(terms);
+        return loginByApple(new LoginDto(signUpDto.getEmail(), signUpDto.getSocialId()));
+    }
+
+    private TokenDto loginByApple(LoginDto loginDto) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
+
+        User user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail())
+                .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
+
+        refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
+        return new TokenDto(accessToken, refreshToken);
     }
 
     public TokenDto login(LoginDto loginDto) {

@@ -46,6 +46,15 @@ public class UserController {
         return ResponseEntity.ok(new CommonApiResponse<>(userService.login(loginDto)));
     }
 
+    @ApiOperation(value = "애플 로그인")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = TokenDto.class)
+    })
+    @PostMapping("/login/apple")
+    public ResponseEntity<CommonApiResponse> loginByApple(@Valid @RequestBody AppleSignUpDto signUpDto) {
+        return ResponseEntity.ok(new CommonApiResponse<>(userService.signUpByApple(signUpDto)));
+    }
+
     @ApiOperation(value = "비회원 로그인")
     @ApiResponses({
             @ApiResponse(code = 200, message = "success", response = TokenDto.class)
