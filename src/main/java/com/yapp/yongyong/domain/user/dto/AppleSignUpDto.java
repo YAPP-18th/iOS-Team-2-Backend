@@ -11,27 +11,16 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 public class AppleSignUpDto {
-    @NotNull
+
     @Email
     private String email;
 
     @NotNull
     private String socialId;
 
-
-    @NotNull
     private String nickname;
-
-
-    @NotNull
     private boolean location;
-
-    @NotNull
     private boolean service;
-
-    @NotNull
     private boolean privacy;
-
-    @NotNull
     private boolean marketing;
 }
