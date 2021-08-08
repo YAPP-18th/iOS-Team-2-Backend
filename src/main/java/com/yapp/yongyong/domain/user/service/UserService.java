@@ -87,8 +87,10 @@ public class UserService {
      */
     public TokenDto signUpByApple(AppleSignUpDto signUpDto) {
 
-        if (userRepository.existsBySocialId(signUpDto.getSocialId())) {
-            return loginByApple(new LoginDto(signUpDto.getEmail(), signUpDto.getSocialId()));
+        Optional<User> findUser = userRepository.findBySocialId(signUpDto.getSocialId());
+
+        if (findUser.isPresent()) {
+            return loginByApple(new AppleLoginDto(findUser.get().getEmail(), signUpDto.getSocialId()));
         }
 
         Authority authority = new Authority(Role.USER.getName());
@@ -112,12 +114,13 @@ public class UserService {
                 .build();
 
         termsOfServiceRepository.save(terms);
-        return loginByApple(new LoginDto(signUpDto.getEmail(), signUpDto.getSocialId()));
+
+        return loginByApple(new AppleLoginDto(savedUser.getEmail(), signUpDto.getSocialId()));
     }
 
-    private TokenDto loginByApple(LoginDto loginDto) {
+    private TokenDto loginByApple(AppleLoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getSocialId());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
