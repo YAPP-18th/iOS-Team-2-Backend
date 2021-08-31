@@ -62,7 +62,7 @@ public class PostService {
         postRequestDto.getPostImages().forEach(
                 image -> {
                     if (!image.isEmpty()) {
-                        postImageRepository.save(new PostImage(uploader.upload(image, POST), savePost));
+                        postImageRepository.save(new PostImage(uploader.upload(image, POST+"/"+savePost.getId()), savePost));
                     }
                 }
         );
