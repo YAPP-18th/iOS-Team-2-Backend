@@ -1,10 +1,9 @@
 # 용기내용
 
 ## 아키텍쳐
-![image](https://user-images.githubusercontent.com/57899673/117116464-5faae880-adc9-11eb-80c8-a02a193eadba.png)
+<img width="832" alt="서버구조" src="https://user-images.githubusercontent.com/57899673/130529560-527e93c6-36eb-47b9-beee-13a092dad74c.png">
+
 
 ## ERD
-```
-url: https://aquerytool.com:443/aquerymain/index/?rurl=4ac7f356-1a49-4094-a308-518211769a61
-password: i8zm22
-```
+![yongyong](https://user-images.githubusercontent.com/57899673/130529846-6cf0da25-7621-4f85-9713-ec1aba0a2c02.png)
+
