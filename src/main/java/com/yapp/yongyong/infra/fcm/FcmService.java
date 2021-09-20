@@ -55,7 +55,7 @@ public class FcmService {
     }
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase-adminsdk.json";
+        String firebaseConfigPath = "/home/ec2-user/app/firebase-adminsdk.json";
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
         googleCredentials.refreshIfExpired();

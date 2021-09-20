@@ -30,6 +30,6 @@ sudo fuser -k 8080/tcp
 
 echo "> $APPLICATION_JAR 배포"
 sudo nohup java -jar \
-    -Dspring.config.location=/home/ec2-user/app/application-real.yml,/home/ec2-user/app/application-aws.yml,/home/ec2-user/app/application-oauth2.yml, /home/ec2-user/app/firebase-adminsdk.json \
+    -Dspring.config.location=/home/ec2-user/app/application-real.yml,/home/ec2-user/app/application-aws.yml,/home/ec2-user/app/application-oauth2.yml \
     -Dspring.profiles.active=real \
     $APPLICATION_JAR > /dev/null 2> /dev/null < /dev/null &
