@@ -32,6 +32,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'com.google.firebase:firebase-admin:7.1.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+
 
     compile 'org.springframework.boot:spring-boot-starter-oauth2-client'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
@@ -39,10 +42,10 @@ dependencies {
     compile 'io.springfox:springfox-swagger-ui:2.9.2'
     compileOnly 'org.projectlombok:lombok'
     compile 'io.jsonwebtoken:jjwt-api:0.11.2'
-    compile ('it.ozimov:embedded-redis:0.7.3') {
+    compile('it.ozimov:embedded-redis:0.7.3') {
         exclude group: "org.slf4j", module: "slf4j-simple"
     }
-    compile'com.amazonaws:aws-java-sdk-ses:1.11.847'
+    compile 'com.amazonaws:aws-java-sdk-ses:1.11.847'
 
 
     runtime 'io.jsonwebtoken:jjwt-impl:0.11.2', 'io.jsonwebtoken:jjwt-jackson:0.11.2'
