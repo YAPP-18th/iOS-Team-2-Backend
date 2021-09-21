@@ -24,7 +24,7 @@ public class FcmService {
     private final ObjectMapper objectMapper;
 
 
-    private void sendMessageTo(String targetToken, String title, String body, String image) throws IOException {
+    public void sendMessageTo(String targetToken, String title, String body, String image) throws IOException {
         String message = makeMessage(targetToken, title, body, image);
 
         OkHttpClient client = new OkHttpClient();

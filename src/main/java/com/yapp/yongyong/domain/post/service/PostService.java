@@ -1,5 +1,7 @@
 package com.yapp.yongyong.domain.post.service;
 
+import com.yapp.yongyong.domain.notification.entity.FcmToken;
+import com.yapp.yongyong.domain.notification.repository.FcmTokenRepository;
 import com.yapp.yongyong.domain.post.entity.*;
 import com.yapp.yongyong.domain.post.dto.*;
 import com.yapp.yongyong.domain.post.mapper.CommentMapper;
@@ -10,12 +12,15 @@ import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.error.NotDataEqualsException;
 import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.global.jwt.SecurityUtil;
+import com.yapp.yongyong.infra.fcm.FcmMessage;
+import com.yapp.yongyong.infra.fcm.FcmService;
 import com.yapp.yongyong.infra.uploader.Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +32,7 @@ public class PostService {
     private static final String POST = "post";
     private static final String GUEST = "손님";
 
+    private final FcmService fcmService;
     private final UserService userService;
     private final PostRepository postRepository;
     private final PlaceRepository placeRepository;
@@ -34,6 +40,7 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final CommentRepository commentRepository;
     private final LikePostRepository likePostRepository;
+    private final FcmTokenRepository fcmTokenRepository;
     private final Uploader uploader;
 
     public void addPost(PostRequestDto postRequestDto, User user) {
@@ -62,12 +69,16 @@ public class PostService {
         postRequestDto.getPostImages().forEach(
                 image -> {
                     if (!image.isEmpty()) {
-                        postImageRepository.save(new PostImage(uploader.upload(image, POST+"/"+savePost.getId()), savePost));
+                        postImageRepository.save(new PostImage(uploader.upload(image, POST + "/" + savePost.getId()), savePost));
                     }
                 }
         );
     }
 
+    public List<PostResponseDto> getPost(Long postId) {
+        Post post = existPost(postId);
+        return getPostResponseDtos(Arrays.asList(post));
+    }
 
     public List<PostResponseDto> getPosts() {
         List<Post> findPosts = postRepository.findAll();
@@ -133,6 +144,15 @@ public class PostService {
         userService.existUser(user.getId());
         Comment saveComment = commentRepository.save(new Comment(commentRequestDto.getContent(), user, post));
         post.getComments().add(saveComment);
+        User writer = post.getUser();
+        Optional<FcmToken> findToken = fcmTokenRepository.findById(writer.getId());
+        findToken.ifPresent(token -> {
+            try {
+                fcmService.sendMessageTo(token.getToken(), user.getNickname() + "님이 회원님의 글에 댓글을 남겼습니다.", "/post/" + postId, user.getImageUrl());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void editComment(Long postId, Long commentId, CommentEditRequestDto dto, User user) {
@@ -173,5 +193,14 @@ public class PostService {
             return;
         }
         likePostRepository.save(new LikePost(user, post));
+        User writer = post.getUser();
+        Optional<FcmToken> findToken = fcmTokenRepository.findById(writer.getId());
+        findToken.ifPresent(token -> {
+            try {
+                fcmService.sendMessageTo(token.getToken(), user.getNickname() + "님이 회원님의 글에 좋아요를 눌렀습니다.", "/post/" + postId, user.getImageUrl());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

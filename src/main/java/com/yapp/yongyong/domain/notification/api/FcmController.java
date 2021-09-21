@@ -4,11 +4,13 @@ import com.yapp.yongyong.domain.notification.entity.FcmToken;
 import com.yapp.yongyong.domain.notification.repository.FcmTokenRepository;
 import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.global.entity.BooleanResponse;
+import com.yapp.yongyong.global.entity.CommonApiResponse;
 import com.yapp.yongyong.global.jwt.LoginUser;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +30,8 @@ public class FcmController {
     })
     @PostMapping("/fcm")
     @PreAuthorize("hasAnyRole('USER')")
-    public BooleanResponse postFcmToken(@LoginUser User user, @RequestBody Map<String, String> map) {
+    public ResponseEntity<BooleanResponse> postFcmToken(@LoginUser User user, @RequestBody Map<String, String> map) {
         fcmTokenRepository.save(new FcmToken(user.getId(), map.get("fcmToken")));
-        return new BooleanResponse(true);
+        return ResponseEntity.ok(new BooleanResponse(true));
     }
 }

@@ -31,13 +31,23 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @ApiOperation(value = "게시물 한개 조회하기")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "success", response = PostResponseDto.class)
+    })
+    @GetMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('USER','GUEST')")
+    public ResponseEntity<CommonApiResponse> getPost(@PathVariable(value = "postId") Long postId) {
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPost(postId)));
+    }
+
     @ApiOperation(value = "전체 게시물 조회하기")
     @ApiResponses({
             @ApiResponse(code = 200, message = "success", response = PostResponseDto.class, responseContainer = "List")
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','GUEST')")
-    public ResponseEntity<CommonApiResponse> getPosts(){
+    public ResponseEntity<CommonApiResponse> getPosts() {
         return ResponseEntity.ok(new CommonApiResponse(postService.getPosts()));
     }
 
@@ -48,7 +58,7 @@ public class PostController {
     @GetMapping("/place")
     @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<CommonApiResponse> getPostsByPlace(@RequestParam String name, @RequestParam String location) {
-        log.info("location {}",location);
+        log.info("location {}", location);
         return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByPlace(name, location)));
     }
 
@@ -69,7 +79,7 @@ public class PostController {
     @GetMapping("/user/mine")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<CommonApiResponse> getPostsByName(@LoginUser User user, @RequestParam(required = false) Integer month) {
-        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsAtMyPage(user,month)));
+        return ResponseEntity.ok(new CommonApiResponse(postService.getPostsAtMyPage(user, month)));
     }
 
     @ApiOperation(value = "게시물 수정하기")
@@ -132,7 +142,7 @@ public class PostController {
     @ApiOperation(value = "좋아요")
     @PutMapping("/{postId}/like")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<Void> likeOrUnlikePost(@PathVariable Long postId, @LoginUser User user){
+    public ResponseEntity<Void> likeOrUnlikePost(@PathVariable Long postId, @LoginUser User user) {
         postService.likeOrUnLikePost(postId, user);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
