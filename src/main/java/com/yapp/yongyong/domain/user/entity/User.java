@@ -1,6 +1,7 @@
 package com.yapp.yongyong.domain.user.entity;
 
 
+import com.yapp.yongyong.domain.post.entity.Post;
 import com.yapp.yongyong.global.entity.BaseTimeEntity;
 import com.yapp.yongyong.global.error.NotExistException;
 import io.swagger.annotations.ApiModel;
@@ -11,6 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -61,6 +65,9 @@ public class User extends BaseTimeEntity {
     @Column(name = "provider")
     private String provider;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "from")
+    private Set<BlockUser> blockUsers = new HashSet<>();
+
     @Builder
     public User(String socialId, String email, String password, Set<Authority> authorities, String nickname, String imageUrl, String introduction, String provider) {
         this.socialId = socialId;
@@ -96,7 +103,7 @@ public class User extends BaseTimeEntity {
     public String getUserRoleKey() {
         return authorities.stream()
                 .map(Authority::getAuthorityName)
-                .filter(name-> name.equals(Role.USER.getName()))
+                .filter(name -> name.equals(Role.USER.getName()))
                 .findAny()
                 .orElseThrow(() -> new NotExistException("유저 권한이 존재하지 않습니다."));
     }

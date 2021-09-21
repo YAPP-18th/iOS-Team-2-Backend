@@ -25,5 +25,15 @@ public class EmailService {
         javaMailSender.send(simpleMessage);
     }
 
+    @Async
+    public void sendMailToAmdin(String subject, String text) {
+        SimpleMailMessage simpleMessage = new SimpleMailMessage();
+        simpleMessage.setFrom(sender);
+        simpleMessage.setTo(sender);
+        simpleMessage.setSubject(subject);
+        simpleMessage.setText(text);
+        javaMailSender.send(simpleMessage);
+    }
+
 }
 

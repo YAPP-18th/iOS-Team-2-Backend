@@ -5,10 +5,7 @@ import com.yapp.yongyong.domain.post.repository.PostRepository;
 import com.yapp.yongyong.domain.user.dto.*;
 import com.yapp.yongyong.domain.user.entity.*;
 import com.yapp.yongyong.domain.user.error.DuplicateRegisterException;
-import com.yapp.yongyong.domain.user.repository.PasswordCodeRepository;
-import com.yapp.yongyong.domain.user.repository.RefreshTokenRepository;
-import com.yapp.yongyong.domain.user.repository.TermsOfServiceRepository;
-import com.yapp.yongyong.domain.user.repository.UserRepository;
+import com.yapp.yongyong.domain.user.repository.*;
 import com.yapp.yongyong.global.error.BadRequestException;
 import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.global.jwt.TokenProvider;
@@ -27,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -49,6 +47,7 @@ public class UserService {
     private final EmailService emailService;
 
     private final UserRepository userRepository;
+    private final BlockUserRepository blockUserRepository;
     private final TermsOfServiceRepository termsOfServiceRepository;
     private final PostRepository postRepository;
     private final LikePostRepository likePostRepository;
@@ -240,5 +239,16 @@ public class UserService {
                     .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
             user.updatePassword(passwordEncoder.encode(newPasswordDto.getPassword()));
         }
+    }
+
+    public User getUser(String email) {
+        return userRepository.findOneWithAuthoritiesByEmail(email)
+                .orElseThrow(() -> new NotExistException("존재하지 않는 유저입니다."));
+    }
+
+    public void blockUser(User user, Long uid) {
+        existUser(uid);
+        Optional<User> target = userRepository.findById(uid);
+        blockUserRepository.save(new BlockUser(user, target.get()));
     }
 }

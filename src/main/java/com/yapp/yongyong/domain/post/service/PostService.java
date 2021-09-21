@@ -7,17 +7,20 @@ import com.yapp.yongyong.domain.post.dto.*;
 import com.yapp.yongyong.domain.post.mapper.CommentMapper;
 import com.yapp.yongyong.domain.post.mapper.PostMapper;
 import com.yapp.yongyong.domain.post.repository.*;
+import com.yapp.yongyong.domain.user.entity.BlockUser;
 import com.yapp.yongyong.domain.user.entity.User;
 import com.yapp.yongyong.domain.user.service.UserService;
 import com.yapp.yongyong.global.error.NotDataEqualsException;
 import com.yapp.yongyong.global.error.NotExistException;
 import com.yapp.yongyong.global.jwt.SecurityUtil;
+import com.yapp.yongyong.infra.email.EmailService;
 import com.yapp.yongyong.infra.fcm.FcmMessage;
 import com.yapp.yongyong.infra.fcm.FcmService;
 import com.yapp.yongyong.infra.uploader.Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -42,6 +45,7 @@ public class PostService {
     private final LikePostRepository likePostRepository;
     private final FcmTokenRepository fcmTokenRepository;
     private final Uploader uploader;
+    private final EmailService emailService;
 
     public void addPost(PostRequestDto postRequestDto, User user) {
         Place findPlace = placeRepository.findByNameAndLocation(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation()).orElseGet(
@@ -103,7 +107,14 @@ public class PostService {
                     .map(PostMapper.INSTANCE::toDtoForGuest)
                     .collect(Collectors.toList());
         }
+
+        Set<User> blocks = userService.getUser(email)
+                .getBlockUsers()
+                .stream()
+                .map(BlockUser::getTo).collect(Collectors.toSet());
+
         return findPosts.stream()
+                .filter(post -> !blocks.contains(post.getUser()))
                 .map(post -> PostMapper.INSTANCE.toDto(post, email))
                 .collect(Collectors.toList());
     }
@@ -202,5 +213,11 @@ public class PostService {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void reportPost(Long postId, Long reportNumber) {
+        existPost(postId);
+        emailService.sendMailToAmdin("게시물 신고", "게시물 번호: " + postId + "\n 신고 이유: " + reportNumber);
     }
 }

@@ -129,4 +129,11 @@ public class UserController {
         userService.resetPassword(newPasswordDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @ApiOperation(value = "사용자 차단")
+    @PostMapping("/block/{uid}")
+    public ResponseEntity<Void> resetPassword(@LoginUser User user, @PathVariable(value = "uid") Long uid) {
+        userService.blockUser(user, uid);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

@@ -146,4 +146,12 @@ public class PostController {
         postService.likeOrUnLikePost(postId, user);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
+
+    @ApiOperation(value = "신고하기")
+    @PostMapping("/{postId}/report")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Void> reportPost(@PathVariable Long postId, @RequestParam(value = "reportNumber") Long reportNumber) {
+        postService.reportPost(postId, reportNumber);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
 }
