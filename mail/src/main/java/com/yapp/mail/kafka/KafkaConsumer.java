@@ -37,7 +37,10 @@ public class KafkaConsumer {
         String emailAddress = (String) map.get("emailAddress");
         String subject = (String) map.get("subject");
         String content = (String) map.get("content");
-
+        if (emailAddress.equals(null)) {
+            emailService.sendMailToAmdin(subject, content);
+            return;
+        }
         emailService.sendMail(emailAddress, subject, content);
     }
 }
