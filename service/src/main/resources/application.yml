@@ -1,0 +1,5 @@
+spring:
+  profiles:
+    group:
+      real: aws, oauth2
+      local: aws, oauth2

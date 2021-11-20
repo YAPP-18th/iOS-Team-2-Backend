@@ -1,4 +1,4 @@
-package com.yapp.post.infra.uploader;
+package com.yapp.post.uploader;
 
 import org.springframework.web.multipart.MultipartFile;
 

@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/")
 public class UserController {
     private final UserService userService;
     private static final String AUTHORIZATION = "Authorization";
@@ -104,5 +104,10 @@ public class UserController {
     public ResponseEntity<Void> resetPassword(@LoginUser User user, @PathVariable(value = "uid") Long uid) {
         userService.blockUser(user, uid);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/data")
+    public ResponseEntity<ServiceUserDto> getUserData(@LoginUser User user) {
+        return ResponseEntity.ok(userService.getUserData(user));
     }
 }

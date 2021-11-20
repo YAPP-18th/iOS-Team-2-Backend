@@ -3,11 +3,12 @@ package com.yapp.user.domain.service;
 import com.yapp.user.domain.dto.*;
 import com.yapp.user.domain.entity.*;
 import com.yapp.user.domain.error.*;
+import com.yapp.user.domain.mapper.UserMapper;
 import com.yapp.user.domain.repository.*;
 import com.yapp.user.global.error.*;
 import com.yapp.user.global.jwt.TokenProvider;
-import com.yapp.user.infra.email.EmailService;
 import com.yapp.user.infra.uploader.Uploader;
+import com.yapp.user.kafka.KafkaProducer;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
     private final Uploader uploader;
-    private final EmailService emailService;
+    private final KafkaProducer kafkaProducer;
 
     private final UserRepository userRepository;
     private final BlockUserRepository blockUserRepository;
@@ -212,7 +213,7 @@ public class UserService {
     public void sendPasswordEmail(String email) {
         String code = RandomStringUtils.randomNumeric(6);
 
-        emailService.sendMail(email, SUBJECT, String.format(MESSAGE, code));
+        kafkaProducer.send("mail-topic", new EmailDto(email, SUBJECT, String.format(MESSAGE, code)));
         PasswordCode passwordCode = passwordCodeRepository.findById(email).orElse(new PasswordCode(email, code, LocalDateTime.now()));
         passwordCode.refresh(code, LocalDateTime.now());
         passwordCodeRepository.save(passwordCode);
@@ -242,5 +243,9 @@ public class UserService {
         existUser(uid);
         Optional<User> target = userRepository.findById(uid);
         blockUserRepository.save(new BlockUser(user, target.get()));
+    }
+
+    public ServiceUserDto getUserData(User user) {
+        return UserMapper.INSTANCE.toServiceDto(user);
     }
 }

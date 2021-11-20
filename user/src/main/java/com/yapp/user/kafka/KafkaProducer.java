@@ -1,8 +1,8 @@
-package com.yapp.post.kafka;
+package com.yapp.user.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yapp.post.dto.EmailDto;
+import com.yapp.user.domain.dto.EmailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

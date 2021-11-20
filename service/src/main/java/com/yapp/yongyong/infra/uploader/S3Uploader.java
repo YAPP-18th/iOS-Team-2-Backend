@@ -1,4 +1,4 @@
-package com.yapp.post.infra.uploader;
+package com.yapp.yongyong.infra.uploader;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;

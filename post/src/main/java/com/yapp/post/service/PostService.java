@@ -4,20 +4,22 @@ package com.yapp.post.service;
 import com.yapp.post.client.UserServiceClient;
 import com.yapp.post.entity.*;
 import com.yapp.post.dto.*;
-import com.yapp.post.infra.uploader.Uploader;
+import com.yapp.post.uploader.Uploader;
+import com.yapp.post.kafka.KafkaProducer;
 import com.yapp.post.mapper.CommentMapper;
 import com.yapp.post.mapper.PostMapper;
 import com.yapp.post.repository.*;
 import com.yapp.post.global.error.NotDataEqualsException;
 import com.yapp.post.global.error.NotExistException;
-import com.yapp.post.infra.email.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,7 +31,6 @@ public class PostService {
     private static final String POST = "post";
     private static final String GUEST = "손님";
 
-
     private final PostRepository postRepository;
     private final PlaceRepository placeRepository;
     private final PostContainerRepository postContainerRepository;
@@ -37,11 +38,19 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final LikePostRepository likePostRepository;
     private final Uploader uploader;
-    private final EmailService emailService;
+    private final KafkaProducer kafkaProducer;
     private final UserServiceClient userServiceClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
+
+    private CircuitBreaker circuitBreaker;
+
+    @PostConstruct
+    public void init() {
+        this.circuitBreaker = circuitBreakerFactory.create("circuitBreaker");
+    }
 
     public void addPost(PostRequestDto postRequestDto) {
-        Long userId = userServiceClient.getUserData().getUserId();
+        Long userId = getUser().getUserId();
         Place findPlace = placeRepository.findByNameAndLocation(postRequestDto.getPlaceName(), postRequestDto.getPlaceLocation()).orElseGet(
                 () -> {
                     Place newPlace = Place.builder()
@@ -56,6 +65,11 @@ public class PostService {
         Post savePost = postRepository.save(PostMapper.INSTANCE.toEntity(postRequestDto, findPlace, userId));
         addPostImages(postRequestDto, savePost);
         addPostContainers(postRequestDto, savePost);
+    }
+
+    private UserDto getUser() {
+        return circuitBreaker.run(() -> userServiceClient.getUserData(),
+                throwable -> new UserDto(1L, "anonymous@yapp.com", new HashSet<>(), "anonymous", new HashSet<>()));
     }
 
     private void addPostContainers(PostRequestDto postRequestDto, Post savePost) {
@@ -94,7 +108,7 @@ public class PostService {
     }
 
     private List<PostResponseDto> getPostResponseDtos(List<Post> findPosts) {
-        UserDto user = userServiceClient.getUserData();
+        UserDto user = getUser();
 
         if (user.getAuthorities().contains(GUEST)) {
             return findPosts.stream()
@@ -116,14 +130,14 @@ public class PostService {
     }
 
     public List<PostResponseDto> getPostsAtMyPage(Integer month) {
-        Long userId = userServiceClient.getUserData().getUserId();
+        Long userId = getUser().getUserId();
         return postRepository.getPostByMonth(userId, month).stream()
                 .map(post -> PostMapper.INSTANCE.toDto(post, userId))
                 .collect(Collectors.toList());
     }
 
     public void deletePost(Long postId) {
-        Long userId = userServiceClient.getUserData().getUserId();
+        Long userId = getUser().getUserId();
         Post post = existPost(postId);
         if (!post.getUserId().equals(userId)) {
             throw new NotDataEqualsException("본인 게시물만 삭제할 수 있습니다.");
@@ -138,7 +152,7 @@ public class PostService {
     }
 
     public void addComment(Long postId, CommentRequestDto commentRequestDto) {
-        UserDto user = userServiceClient.getUserData();
+        UserDto user = getUser();
         Post post = existPost(postId);
         Comment saveComment = commentRepository.save(new Comment(commentRequestDto.getContent(), user.getUserId(), post));
         post.getComments().add(saveComment);
@@ -146,7 +160,7 @@ public class PostService {
 
     public void editComment(Long postId, Long commentId, CommentEditRequestDto dto) {
         Post post = existPost(postId);
-        UserDto user = userServiceClient.getUserData();
+        UserDto user = getUser();
         Comment findComment = getCommentById(commentId);
         if (!findComment.getUserId().equals(user.getUserId())) {
             throw new NotDataEqualsException("본인 게시물만 수정할 수 있습니다.");
@@ -161,7 +175,7 @@ public class PostService {
     }
 
     public void deleteComment(Long postId, Long commentId) {
-        UserDto user = userServiceClient.getUserData();
+        UserDto user = getUser();
         Post post = existPost(postId);
         Comment findComment = getCommentById(commentId);
         if (!findComment.getUserId().equals(user.getUserId())) {
@@ -177,7 +191,7 @@ public class PostService {
     }
 
     public void likeOrUnLikePost(Long postId) {
-        UserDto user = userServiceClient.getUserData();
+        UserDto user = getUser();
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotExistException("존재 하지 않는 게시물입니다."));
         if (likePostRepository.existsByUserIdAndPost(user.getUserId(), post)) {
             likePostRepository.deleteByUserIdAndPost(user.getUserId(), post);
@@ -186,9 +200,10 @@ public class PostService {
         likePostRepository.save(new LikePost(user.getUserId(), post));
     }
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @Transactional(readOnly = true)
     public void reportPost(Long postId, Long reportNumber) {
         existPost(postId);
-        emailService.sendMailToAmdin("게시물 신고", "게시물 번호: " + postId + "\n 신고 이유: " + reportNumber);
+        EmailDto emailDto = new EmailDto(null, "게시물 신고", "게시물 번호: " + postId + "\n 신고 이유: " + reportNumber);
+        kafkaProducer.send("mail-topic", emailDto);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.orderservice.messagequeue;
+package com.yapp.post.kafka;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;

@@ -47,8 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/configuration/security",
                         "/swagger-ui.html",
                         "/webjars/**",
-                        "/actuator/**",
-                        "/profile");
+                        "/actuator/**");
     }
 
     @Override
@@ -71,13 +70,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/user/check/email").permitAll()
-                .antMatchers("/user/check/nickname").permitAll()
-                .antMatchers("/user/login").permitAll()
-                .antMatchers("/user/login/apple").permitAll()
-                .antMatchers("/user/login/guest").permitAll()
-                .antMatchers("/user/sign-up").permitAll()
-                .antMatchers("/user/password/**").permitAll()
+                .antMatchers("/check/email").permitAll()
+                .antMatchers("/check/nickname").permitAll()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/login/apple").permitAll()
+                .antMatchers("/login/guest").permitAll()
+                .antMatchers("/sign-up").permitAll()
+                .antMatchers("/password/**").permitAll()
                 .antMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
 
