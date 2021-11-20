@@ -5,6 +5,7 @@ import com.yapp.post.dto.CommentRequestDto;
 import com.yapp.post.dto.PostRequestDto;
 import com.yapp.post.global.entity.CommonApiResponse;
 import com.yapp.post.service.PostService;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,12 +21,14 @@ import javax.validation.Valid;
 public class PostController {
     private final PostService postService;
 
+    @Timed(value = "post.add", longTask = true)
     @PostMapping
     public ResponseEntity<Void> addPost(PostRequestDto postRequestDto) {
         postService.addPost(postRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Timed(value = "post.get", longTask = true)
     @GetMapping("/{postId}")
     public ResponseEntity<CommonApiResponse> getPost(@PathVariable(value = "postId") Long postId) {
         return ResponseEntity.ok(new CommonApiResponse(postService.getPost(postId)));
@@ -42,11 +45,13 @@ public class PostController {
         return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByPlace(name, location)));
     }
 
+    @Timed(value = "post.getOthers", longTask = true)
     @GetMapping("/user")
     public ResponseEntity<CommonApiResponse> getPostsByName(@RequestParam Long userId) {
         return ResponseEntity.ok(new CommonApiResponse(postService.getPostsByUser(userId)));
     }
 
+    @Timed(value = "post.getMine", longTask = true)
     @GetMapping("/user/mine")
     public ResponseEntity<CommonApiResponse> getPostsByName(@RequestParam(required = false) Integer month) {
         return ResponseEntity.ok(new CommonApiResponse(postService.getPostsAtMyPage(month)));

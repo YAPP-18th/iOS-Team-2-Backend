@@ -40,6 +40,7 @@ dependencies {
 	implementation 'com.querydsl:querydsl-jpa'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

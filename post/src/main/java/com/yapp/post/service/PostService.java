@@ -67,6 +67,7 @@ public class PostService {
         addPostContainers(postRequestDto, savePost);
     }
 
+
     private UserDto getUser() {
         return circuitBreaker.run(() -> userServiceClient.getUserData(),
                 throwable -> new UserDto(1L, "anonymous@yapp.com", new HashSet<>(), "anonymous", new HashSet<>()));
