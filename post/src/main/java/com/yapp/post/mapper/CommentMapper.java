@@ -1,7 +1,7 @@
 package com.yapp.post.mapper;
 
-import com.yapp.post.entity.Comment;
 import com.yapp.post.dto.CommentResponseDto;
+import com.yapp.post.entity.Comment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -10,7 +10,6 @@ import org.mapstruct.factory.Mappers;
 public interface CommentMapper {
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
-    @Mapping(source = "comment.user", target = "user")
     @Mapping(source = "id", target = "commentId")
     @Mapping(expression = "java(comment.getCreatedDate().toLocalDate())", target = "createdDate")
     CommentResponseDto toDto(Comment comment);

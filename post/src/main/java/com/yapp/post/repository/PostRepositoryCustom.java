@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface PostRepositoryCustom {
 
-
     List<Post> getPostByMonth(Long userId, Integer month);
 }

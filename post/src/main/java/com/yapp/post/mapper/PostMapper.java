@@ -44,8 +44,8 @@ public interface PostMapper {
     @Mapping(expression = "java(post.getCreatedDate().toLocalDate())", target = "createdDate")
     @Mapping(expression = "java(post.getComments().size())", target = "commentCount")
     @Mapping(expression = "java(post.getLikePosts().size())", target = "likeCount")
-    @Mapping(expression = "java(post.getLikePosts().stream().anyMatch(likePost -> likePost.getUser().getEmail().equals(email)))", target = "isLikePressed")
-    PostResponseDto toDto(Post post, String email);
+    @Mapping(expression = "java(post.getLikePosts().stream().anyMatch(likePost -> likePost.getUserId().equals(userId)))", target = "isLikePressed")
+    PostResponseDto toDto(Post post, Long userId);
 
     @Mapping(source = "dto.content", target = "content")
     Post toEntity(PostRequestDto dto, Place place, Long userId);

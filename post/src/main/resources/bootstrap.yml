@@ -5,3 +5,4 @@ spring:
       name: post-service
   profiles:
     active: real
+

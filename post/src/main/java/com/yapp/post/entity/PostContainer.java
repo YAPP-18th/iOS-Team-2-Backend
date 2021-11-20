@@ -1,5 +1,7 @@
 package com.yapp.post.entity;
 
+import com.yapp.post.dto.ContainerDto;
+import com.yapp.post.dto.PostContainerDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -41,5 +43,13 @@ public class PostContainer {
         this.containerSize = containerSize;
         this.containerCount = containerCount;
         this.post = post;
+    }
+
+    public void update(PostContainerDto postContainerDto) {
+        this.food = postContainerDto.getFood();
+        this.containerCount = postContainerDto.getContainerCount();
+        this.containerName = postContainerDto.getContainer().getName();
+        this.containerSize = postContainerDto.getContainer().getSize();
+        this.foodCount = postContainerDto.getFoodCount();
     }
 }
